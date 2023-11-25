@@ -74,7 +74,27 @@ while true; do
             echo "----------"
             ;;
         2) 
-            # 选项2的命令
+            clear
+            echo "正在更新系统..."
+
+            # 检测 Debian/Ubuntu 系统
+            if [ -f "/etc/debian_version" ]; then
+                echo "检测到 Debian/Ubuntu 系统"
+                sudo apt autoremove -y
+
+            # 检测 CentOS/RHEL 系统
+            elif [ -f "/etc/redhat-release" ]; then
+                echo "检测到 CentOS/RHEL 系统"
+			    sudo yum update -y
+                sudo yum autoremove -y
+
+            else
+                echo "未知的系统类型，无法更新"
+            fi
+
+            # 等待用户输入
+            echo "系统更新完成，按任意键返回主菜单..."
+            read -n 1 -s -r
             ;;
         3)
             while true; do
