@@ -110,8 +110,8 @@ case $choice in
 			read -p "请输入数字或指令:" sub_choice
 
 			case $sub_choice in
-    1)
-     wget -O snell.sh --no-check-certificate https://git.io/Snell.sh && chmod +x snell.sh && ./snell.sh
+				1)
+					wget -O snell.sh --no-check-certificate https://git.io/Snell.sh && chmod +x snell.sh && ./snell.sh
 					;;
 				2)
 					wget -O ss-rust.sh --no-check-certificate https://raw.githubusercontent.com/xOS/Shadowsocks-Rust/master/ss-rust.sh && chmod +x ss-rust.sh && ./ss-rust.sh
@@ -151,24 +151,7 @@ case $choice in
 			read -p "请输入数字或指令:" sub_choice
 
 			case $sub_choice in
-    1)
-     clear
-     echo "正在检测操作系统并安装宝塔面板..."
-     # 检测 Debian/Ubuntu 系统
-     if [ -f "/etc/debian_version" ]; then
-         echo "检测到 Debian/Ubuntu 系统"
-         wget -O install.sh http://download.bt.cn/install/install-ubuntu_6.0.sh && sudo bash install.sh
-     # 检测 CentOS/RHEL 系统
-     elif [ -f "/etc/redhat-release" ]; then
-         echo "检测到 CentOS/RHEL 系统"
-         yum install -y wget && wget -O install.sh http://download.bt.cn/install/install_6.0.sh && sh install.sh
-     # 检测 Fedora 系统
-     elif [ -f "/etc/fedora-release" ]; then
-         echo "检测到 Fedora 系统"
-         wget -O install.sh http://download.bt.cn/install/install_6.0.sh && bash install.sh
-     else
-         echo "未知的系统类型，无法安装宝塔面板"
-     fi
+
 			
 				0)
 					cd ~
