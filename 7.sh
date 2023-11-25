@@ -28,7 +28,7 @@ read choice
 
 case $choice in
 	renew) 
-		curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
+		rm 7.sh && curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
 		;;
 	1) 
 		clear
