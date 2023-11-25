@@ -19,8 +19,6 @@ echo "8.融合怪测试"
 echo "9.三网回程检测"
 echo "10.三网回程速度测试"
 echo "------------------------"
-echo "a.科技lion整合"
-echo "------------------------"
 echo "0.退出此脚本"
 echo "输入renew更新此脚本"
 #echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
@@ -31,9 +29,6 @@ read choice
 case $choice in
 	renew) 
 		curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
-		;;
-	a) 
-		curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh && chmod +x kejilion.sh && ./kejilion.sh
 		;;
 	1) 
 		clear
