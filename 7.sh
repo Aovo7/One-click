@@ -30,7 +30,51 @@ while true; do
         1) 
             clear
             echo "收集 VPS 系统信息中..."
-            # 系统信息收集脚本的内容
+
+            # 获取操作系统信息
+            os_info=$(uname -o)
+            os_version=$(uname -r)
+
+            # CPU 信息
+            cpu_model=$(grep -m1 'model name' /proc/cpuinfo | cut -d ":" -f2)
+            cpu_cores=$(grep -c 'model name' /proc/cpuinfo)
+
+            # 内存信息
+            mem_total=$(free -m | awk '/Mem:/ { print $2 "MB" }')
+            mem_used=$(free -m | awk '/Mem:/ { print $3 "MB" }')
+
+            # 磁盘使用情况
+            disk_usage=$(df -h | awk '$NF=="/"{printf "%s of %s Used (%s)", $3,$2,$5}')
+
+            # 网络信息
+            ipv4=$(curl -s ipv4.icanhazip.com)
+            ipv6=$(curl -s ipv6.icanhazip.com)
+
+            # 系统运行时间
+            uptime_info=$(uptime -p)
+
+            # 主机名
+            host_name=$(hostname)
+
+            # 当前时间
+            current_time=$(date)
+            # 显示信息
+            echo "系统信息"
+            echo "----------"
+            echo "操作系统: $os_info $os_version"
+            echo "CPU 型号: $cpu_model"
+            echo "CPU 核心数: $cpu_cores"
+            echo "内存使用: $mem_used / $mem_total"
+            echo "磁盘使用: $disk_usage"
+            echo "公网 IPv4 地址: $ipv4"
+            echo "公网 IPv6 地址: $ipv6"
+            echo "系统运行时间: $uptime_info"
+            echo "主机名: $host_name"
+            echo "当前时间: $current_time"
+            echo "----------"
+            # 等待用户输入
+            echo "按任意键返回主菜单..."
+            read -n 1 -s -r
             ;;
         2) 
             # 选项2的命令
