@@ -138,4 +138,4 @@ while true; do
             echo "请输入正确的数字或指令哦"
             ;;
     esac
-done
+
