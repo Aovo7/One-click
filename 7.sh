@@ -182,7 +182,7 @@ case $choice in
 		;;
 esac
 	echo -e "\033[0;32m操作完成\033[0m"
-	echo "按任意键继续..."
+	echo "按任意键返回主菜单..."
 	read -n 1 -s -r -p ""
 	echo ""
 	clear
