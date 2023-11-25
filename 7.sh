@@ -175,7 +175,7 @@ case $choice in
 		;;
 	0) 
 		clear
-		exit 0
+		exit 0 && exit && exit 0 && exit 0 && exit 0 && exit 0
 		 ;;
 	*) 
 		echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
