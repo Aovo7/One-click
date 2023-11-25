@@ -144,7 +144,7 @@ case $choice in
 			esac
 		done
 		;;
-	3)
+	4)
 		while true; do
 			clear
 			echo "肝不动了 休息休息："
