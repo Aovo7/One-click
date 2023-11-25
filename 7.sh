@@ -110,7 +110,7 @@ case $choice in
 			echo "4.安装 Hysteria"
 			echo "5.安装 SingBox"
 			echo "6.安装 Trojan"
-			echo "7.安装 V2Ray"
+			echo "7.安装 V2Ray(VMESS/Trojan+WS/gRPC/TCP(+TLS)"
 			echo "0.返回主菜单"
 			read -p "请输入数字或指令:" sub_choice
 
@@ -142,7 +142,7 @@ case $choice in
 					exit
 					;;
 				*)
-					echo "此地无银三百两 请输入正确的数字或指令哦~"
+					echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
 					;;
 			esac
 		done
@@ -162,7 +162,7 @@ case $choice in
 					exit
 					;;
 				*)
-					echo "此地无银三百两 请输入正确的数字或指令哦~"
+					echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
 					;;
 			esac
 		done
@@ -181,7 +181,7 @@ case $choice in
 		exit 0
 		 ;;
 	*) 
-		echo "此地无银三百两 请输入正确的数字或指令哦~"
+		echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
 		;;
 esac
 	echo -e "\033[0;32m操作完成\033[0m"
