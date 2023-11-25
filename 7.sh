@@ -140,7 +140,7 @@ while true; do
             ;;
         0) 
             clear
-            exit
+            exit 0
              ;;
         *) 
             echo "请输入正确的数字或指令哦"
