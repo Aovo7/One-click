@@ -7,9 +7,10 @@ echo "脚本目录"
 echo "1.系统信息"
 echo "2.系统更新"
 echo "3.节点搭建"
+echo "4.网站搭建"
 echo "8.融合怪测试"
-echo "9.三网回程速度测试"
-echo "10.三网回程检测"
+echo "9.三网回程检测"
+echo "10.三网回程速度测试"
 echo "------------------------"
 echo "a.科技lion脚本工具"
 echo "------------------------"
@@ -143,14 +144,18 @@ case $choice in
 			esac
 		done
 		;;
+	3)
+		while true; do
+			clear
+			echo "肝不动了 休息休息："
 	8) 
 		curl -L https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh -o ecs.sh && chmod +x ecs.sh && bash ecs.sh
 		;;
 	9) 
-		bash <(curl -Lso- https://down.wangchao.info/sh/superspeed.sh)
+		curl https://raw.githubusercontent.com/zhanghanyun/backtrace/main/install.sh -sSf | sh
 		;;
 	10) 
-		curl https://raw.githubusercontent.com/zhanghanyun/backtrace/main/install.sh -sSf | sh
+		bash <(curl -Lso- https://down.wangchao.info/sh/superspeed.sh)
 		;;
 	0) 
 		clear
