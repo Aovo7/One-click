@@ -27,7 +27,7 @@ read input
 
 case $input in
     renew)
-        curl -sS -O https://raw.githubusercontent.com/Aovo7/Funny/main/One-click%20script/7.sh && chmod +x 7.sh && ./7.sh
+        curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
         ;;
     0)
         exit 0
