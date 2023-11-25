@@ -4,9 +4,8 @@ while true; do
     clear
     echo "------------------------"
     echo "脚本目录"
-    echo "主菜单："
-    echo "1. 选项1"
-    echo "2. 选项2"
+    echo "1.系统信息"
+    echo "2."
     echo "3. 节点搭建"
     echo "8.融合怪测试"
     echo "9.三网回程速度测试"
@@ -14,8 +13,10 @@ while true; do
     echo "------------------------"
     echo "a.科技lion脚本工具"
     echo "------------------------"
+    echo "0.退出此脚本"
     echo "输入"renew"更新此脚本"
     echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
+    echo "OwO  ——————"
     echo "请输入数字或指令:"
     read choice
 
@@ -27,7 +28,51 @@ while true; do
             curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh && chmod +x kejilion.sh && ./kejilion.sh
             ;;
         1) 
-            # 选项1的命令
+            clear
+            echo "收集 VPS 系统信息中..."
+
+            # 获取操作系统信息
+            os_info=$(uname -o)
+            os_version=$(uname -r)
+
+            # CPU 信息
+            cpu_model=$(grep -m1 'model name' /proc/cpuinfo | cut -d ":" -f2)
+            cpu_cores=$(grep -c 'model name' /proc/cpuinfo)
+
+            # 内存信息
+            mem_total=$(free -m | awk '/Mem:/ { print $2 "MB" }')
+            mem_used=$(free -m | awk '/Mem:/ { print $3 "MB" }')
+
+            # 磁盘使用情况
+            disk_usage=$(df -h | awk '$NF=="/"{printf "%s of %s Used (%s)", $3,$2,$5}')
+
+            # 网络信息
+            ipv4=$(curl -s ipv4.icanhazip.com)
+            ipv6=$(curl -s ipv6.icanhazip.com)
+
+            # 系统运行时间
+            uptime_info=$(uptime -p)
+
+            # 主机名
+            host_name=$(hostname)
+
+            # 当前时间
+            current_time=$(date)
+
+            # 显示信息
+            echo "系统信息"
+            echo "----------"
+            echo "操作系统: $os_info $os_version"
+            echo "CPU 型号: $cpu_model"
+            echo "CPU 核心数: $cpu_cores"
+            echo "内存使用: $mem_used / $mem_total"
+            echo "磁盘使用: $disk_usage"
+            echo "公网 IPv4 地址: $ipv4"
+            echo "公网 IPv6 地址: $ipv6"
+            echo "系统运行时间: $uptime_info"
+            echo "主机名: $host_name"
+            echo "当前时间: $current_time"
+            echo "----------"
             ;;
         2) 
             # 选项2的命令
@@ -36,14 +81,14 @@ while true; do
             while true; do
                 clear
                 echo "节点搭建："
-                echo "1. 安装 Snell"
-                echo "2. 安装 Shadowsocks-Rust"
-                echo "3. 安装 TUIC"
-                echo "4. 安装 Hysteria"
-                echo "5. 安装 SingBox"
-                echo "6. 安装 Trojan"
-                echo "7. 安装 V2Ray"
-                echo "0. 返回主菜单"
+                echo "1.安装 Snell"
+                echo "2.安装 Shadowsocks-Rust"
+                echo "3.安装 TUIC"
+                echo "4.安装 Hysteria"
+                echo "5.安装 SingBox"
+                echo "6.安装 Trojan"
+                echo "7.安装 V2Ray"
+                echo "0.返回主菜单"
                 read -p "请输入数字或指令:" sub_choice
 
                 case $sub_choice in
@@ -74,7 +119,7 @@ while true; do
                         exit
                         ;;
                     *)
-                        echo "无效输入，请重新输入"
+                        echo "请输入正确的数字或指令哦"
                         ;;
                 esac
                 echo -e "\033[0;32m操作完成\033[0m"
