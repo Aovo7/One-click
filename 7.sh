@@ -99,10 +99,6 @@ case $choice in
 		else
 			echo "未知的系统类型，无法更新"
 		fi
-
-		# 等待用户输入
-		echo "系统更新完成，按任意键返回主菜单..."
-		read -n 1 -s -r
 		;;
 	3)
 		while true; do
