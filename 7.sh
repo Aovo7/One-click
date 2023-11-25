@@ -147,9 +147,12 @@ case $choice in
 	4)
 		while true; do
 			clear
-			echo "肝不动了 休息休息："
-			
+			echo "肝不动了 休息休息T.T"
+			echo "0.返回主菜单"
+			read -p "请输入数字或指令:" sub_choice
+
 			case $sub_choice in
+			
 				0)
 					cd ~
 					./7.sh
@@ -160,7 +163,7 @@ case $choice in
 					;;
 			esac
 		done
-		;;			
+		;;
 	8) 
 		curl -L https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh -o ecs.sh && chmod +x ecs.sh && bash ecs.sh
 		;;
