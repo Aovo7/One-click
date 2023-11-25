@@ -23,7 +23,7 @@ echo "a.科技lion整合"
 echo "------------------------"
 echo "0.退出此脚本"
 echo "输入renew更新此脚本"
-echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
+#echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
 echo "OwO  ——————"
 echo "请输入数字或指令:"
 read choice
@@ -142,7 +142,7 @@ case $choice in
 					exit
 					;;
 				*)
-					echo "请输入正确的数字或指令哦"
+					echo "此地无银三百两 请输入正确的数字或指令哦~"
 					;;
 			esac
 		done
@@ -162,7 +162,7 @@ case $choice in
 					exit
 					;;
 				*)
-					echo "请输入正确的数字或指令哦"
+					echo "此地无银三百两 请输入正确的数字或指令哦~"
 					;;
 			esac
 		done
@@ -181,7 +181,7 @@ case $choice in
 		exit 0
 		 ;;
 	*) 
-		echo "请输入正确的数字或指令哦"
+		echo "此地无银三百两 请输入正确的数字或指令哦~"
 		;;
 esac
 	echo -e "\033[0;32m操作完成\033[0m"
