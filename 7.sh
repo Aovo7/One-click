@@ -151,7 +151,6 @@ case $choice in
 			read -p "请输入数字或指令:" sub_choice
 
 			case $sub_choice in
-			#!/bin/bash
     1)
      clear
      echo "正在检测操作系统并安装宝塔面板..."
