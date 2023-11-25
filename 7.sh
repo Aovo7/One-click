@@ -1,24 +1,24 @@
 #!/bin/bash
 
 while true; do
-    clear
-    echo "------------------------"
-    echo "脚本目录"
-    echo "1.系统信息"
-    echo "2.系统更新"
-    echo "3.节点搭建"
-    echo "8.融合怪测试"
-    echo "9.三网回程速度测试"
-    echo "10.三网回程检测"
-    echo "------------------------"
-    echo "a.科技lion脚本工具"
-    echo "------------------------"
-    echo "0.退出此脚本"
-    echo "输入renew更新此脚本"
-    echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
-    echo "OwO  ——————"
-    echo "请输入数字或指令:"
-    read choice
+clear
+echo "------------------------"
+echo "脚本目录"
+echo "1.系统信息"
+echo "2."
+echo "3.节点搭建"
+echo "8.融合怪测试"
+echo "9.三网回程速度测试"
+echo "10.三网回程检测"
+echo "------------------------"
+echo "a.科技lion脚本工具"
+echo "------------------------"
+echo "0.退出此脚本"
+echo "输入renew更新此脚本"
+echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
+echo "OwO  ——————"
+echo "请输入数字或指令:"
+read choice
 
     case $choice in
         renew) 
@@ -159,10 +159,10 @@ while true; do
         *) 
             echo "请输入正确的数字或指令哦"
             ;;
-    esac
-	echo -e "\033[0;32m操作完成\033[0m"
-    echo "按任意键继续..."
-    read -n 1 -s -r -p ""
-    echo ""
-    clear
+esac
+echo -e "\033[0;32m操作完成\033[0m"
+echo "按任意键继续..."
+read -n 1 -s -r -p ""
+echo ""
+clear
 done
