@@ -109,7 +109,7 @@ case $choice in
 			clear
 			echo "节点搭建："
 			echo "1.安装 Snell"
-			echo "2.安装 Shadowsocks-Rust"
+			echo "2.安装 Shadowsocks"
 			echo "3.安装 TUIC"
 			echo "4.安装 Hysteria"
 			echo "5.安装 SingBox"
