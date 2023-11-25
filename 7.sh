@@ -5,7 +5,7 @@ while true; do
     echo "------------------------"
     echo "脚本目录"
     echo "1.系统信息"
-    echo "2."
+    echo "2.系统更新"
     echo "3.节点搭建"
     echo "8.融合怪测试"
     echo "9.三网回程速度测试"
