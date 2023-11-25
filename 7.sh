@@ -146,4 +146,9 @@ while true; do
             echo "请输入正确的数字或指令哦"
             ;;
     esac
+	echo -e "\033[0;32m操作完成\033[0m"
+    echo "按任意键继续..."
+    read -n 1 -s -r -p ""
+    echo ""
+    clear
 done
