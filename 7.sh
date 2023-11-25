@@ -134,6 +134,9 @@ while true; do
             ;;
         10) 
             curl https://raw.githubusercontent.com/zhanghanyun/backtrace/main/install.sh -sSf | sh
+            # 等待用户输入
+            echo "按任意键返回主菜单..."
+            read -n 1 -s -r
             ;;
         0) 
             clear
