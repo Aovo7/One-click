@@ -23,12 +23,11 @@ echo "0.退出此脚本"
 echo "输入renew更新此脚本"
 #echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
 echo "OwO  ——————"
-echo "请输入数字或指令:"
 
 # 清除输入缓冲区
 while read -r -t 0; do read -r; done
 
-read choice
+read -p "请输入数字或指令: " choice
 
 case $choice in
 	renew) 
