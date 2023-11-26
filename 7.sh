@@ -24,6 +24,10 @@ echo "输入renew更新此脚本"
 #echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
 echo "OwO  ——————"
 echo "请输入数字或指令:"
+
+# 清除输入缓冲区
+while read -r -t 0; do read -r; done
+
 read choice
 
 case $choice in
@@ -1576,4 +1580,5 @@ esac
 	echo "按任意键返回主菜单..."
 	read -n 1 -s -r -p ""
 	echo ""
+	clear
 done
