@@ -143,7 +143,6 @@ case $choice in
 		done
 		;;
 
-	<<'COMMENT'
  	4)
 		while true; do
 			clear
@@ -1554,7 +1553,7 @@ case $choice in
 				clear
 		done
 		;;
-  	COMMENT
+
 	8) 
 		curl -L https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh -o ecs.sh && chmod +x ecs.sh && bash ecs.sh
 		;;
