@@ -1,4 +1,7 @@
 #!/bin/bash
+#安装weget curl依赖包
+#yum update -y && yum install curl -y #CentOS/Fedora
+#apt-get update -y && apt-get install curl -y #Debian/Ubuntu
 
 while true; do
 clear
@@ -23,14 +26,9 @@ echo "0.退出此脚本"
 echo "输入renew更新此脚本"
 #echo "当运行相应脚本后 会进入对应脚本的菜单 若想调出此菜单 请输入./7.sh"
 echo "OwO  ——————"
-
 read -p "请输入数字或指令: " choice
 
 case $choice in
-	renew) 
-		curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
-		;;
-
 	1) 
 		clear
 		echo "收集 VPS 系统信息中..."
