@@ -1576,5 +1576,4 @@ esac
 	echo "按任意键返回主菜单..."
 	read -n 1 -s -r -p ""
 	echo ""
-	clear
 done
