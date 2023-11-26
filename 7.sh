@@ -147,7 +147,7 @@ case $choice in
 			esac
 		done
 		;;
-	10)
+	4)
 		while true; do
 			echo -e "\033[33m ▼ \033[0m"
 			echo -e "\033[33mLDNMP建站\033[0m"
