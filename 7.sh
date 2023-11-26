@@ -142,7 +142,9 @@ case $choice in
 			esac
 		done
 		;;
-	4)
+
+	<<'COMMENT'
+ 	4)
 		while true; do
 			clear
 			echo  "源于https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh"
@@ -1552,7 +1554,7 @@ case $choice in
 				clear
 		done
 		;;
-
+  	COMMENT
 	8) 
 		curl -L https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh -o ecs.sh && chmod +x ecs.sh && bash ecs.sh
 		;;
