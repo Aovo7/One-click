@@ -149,6 +149,7 @@ case $choice in
 		;;
 	4)
 		while true; do
+			clear
 			echo -e "\033[33m ▼ \033[0m"
 			echo -e "\033[33mLDNMP建站\033[0m"
 			echo  "------------------------"
@@ -1537,43 +1538,25 @@ case $choice in
 					esac
 					;;
 
-					0)
+				0)
 					cd ~
-					./kejilion.sh
+					./7.sh
 					exit
 					;;
 
-					*)
-					echo "无效的输入!"
-					esac
 
-					echo -e "\033[0;32m操作完成\033[0m"
-					echo "按任意键继续..."
-					read -n 1 -s -r -p ""
-					echo ""
-					clear
-					done
-					;;
-					4)
-					while true; do
-						clear
-						echo "肝不动了 休息休息T.T"
-						echo "0.返回主菜单"
-						read -p "请输入数字或指令:" sub_choice
+				*)
+					echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
+					;;				
+			esac
+				echo -e "\033[0;32m操作完成\033[0m"
+				echo "按任意键继续..."
+				read -n 1 -s -r -p ""
+				echo ""
+				clear
+		done
+		;;
 
-						case $sub_choice in
-						
-							0)
-								cd ~
-								./7.sh
-								exit
-								;;
-							*)
-								echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
-								;;
-						esac
-					done
-					;;
 	8) 
 		curl -L https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh -o ecs.sh && chmod +x ecs.sh && bash ecs.sh
 		;;
