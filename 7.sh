@@ -94,55 +94,6 @@ case $choice in
 			echo "未知的系统类型，无法更新"
 		fi
 		;;
-	3)
-		while true; do
-			clear
-			echo "源于https://likeable-fuschia-f06.notion.site/VPS-76f1905f566942dabfa7f95317a0d2ca"
-			echo "节点搭建："
-			echo "1.安装 Snell"
-			echo "2.安装 Shadowsocks"
-			echo "3.安装 TUIC"
-			echo "4.安装 Hysteria"
-			echo "5.安装 SingBox"
-			echo "6.安装 Trojan"
-			echo "7.安装 V2Ray(VMESS/Trojan+WS/gRPC/TCP(+TLS)"
-			echo "0.返回主菜单"
-			read -p "请输入数字或指令:" sub_choice
-
-			case $sub_choice in
-				1)
-					wget -O snell.sh --no-check-certificate https://git.io/Snell.sh && chmod +x snell.sh && ./snell.sh
-					;;
-				2)
-					wget -O ss-rust.sh --no-check-certificate https://raw.githubusercontent.com/xOS/Shadowsocks-Rust/master/ss-rust.sh && chmod +x ss-rust.sh && ./ss-rust.sh
-					;;
-				3)
-					wget -N --no-check-certificate https://raw.githubusercontent.com/CCCOrz/auto-tuic/main/tuic.sh && bash tuic.sh
-					;;
-				4)
-					wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/hysteria-install/main/hy2/hysteria.sh && bash hysteria.sh
-					;;
-				5)
-					wget -N -O /root/singbox.sh https://raw.githubusercontent.com/TinrLin/sing-box/main/Install.sh && chmod +x /root/singbox.sh && ln -sf /root/singbox.sh /usr/local/bin/singbox && bash /root/singbox.sh
-					;;
-				6)
-					curl -O https://raw.githubusercontent.com/atrandys/trojan/master/trojan_mult.sh && chmod +x trojan_mult.sh
-					;;
-				7)
-					bash <(wget -qO- -o- https://git.io/v2ray.sh)
-					;;
-				0)
-					cd ~
-					./7.sh
-					exit
-					;;
-				*)
-					echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
-					;;
-			esac
-		done
-		;;
-
 
 	8) 
 		curl -L https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh -o ecs.sh && chmod +x ecs.sh && bash ecs.sh
