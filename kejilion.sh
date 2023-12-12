@@ -1,8 +1,233 @@
 #!/bin/bash
 #仅做备份 以防丢失 无商业用途 请支持原作者
 #原作者：科技lion
-#原地址： https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh
+#原地址： https://github.com/kejilion/sh/blob/main/kejilion.sh
 #运行命令：curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh && chmod +x kejilion.sh && ./kejilion.sh
+#!/bin/bash
+
+install_wget() {
+    if ! command -v wget &>/dev/null; then
+        if command -v apt &>/dev/null; then
+            apt update -y && apt install -y wget
+        elif command -v yum &>/dev/null; then
+            yum -y update && yum -y install wget
+        else
+            echo "未知的包管理器!"
+            break
+        fi
+    fi
+}
+
+install_sshpass() {
+    if ! command -v sshpass &>/dev/null; then
+        if command -v apt &>/dev/null; then
+            apt update -y && apt install -y sshpass
+        elif command -v yum &>/dev/null; then
+            yum -y update && yum -y install sshpass
+        else
+            echo "未知的包管理器!"
+            break
+        fi
+    fi
+}
+
+
+# 定义安装 Docker 的函数
+install_docker() {
+    if ! command -v docker &>/dev/null; then
+        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
+        systemctl start docker
+        systemctl enable docker
+    else
+        echo "Docker 已经安装"
+    fi
+}
+
+iptables_open() {
+    iptables -P INPUT ACCEPT
+    iptables -P FORWARD ACCEPT
+    iptables -P OUTPUT ACCEPT
+    iptables -F
+}
+
+install_ldnmp() {
+      cd /home/web && docker-compose up -d
+      clear
+      echo "正在配置LDNMP环境，请耐心稍等……"
+
+      # 定义要执行的命令
+      commands=(
+          "docker exec php apt update > /dev/null 2>&1"
+          "docker exec php apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
+          "docker exec php docker-php-ext-install mysqli pdo_mysql zip exif gd intl bcmath opcache > /dev/null 2>&1"
+          "docker exec php pecl install imagick > /dev/null 2>&1"
+          "docker exec php sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
+          "docker exec php pecl install redis > /dev/null 2>&1"
+          "docker exec php sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
+          "docker exec php sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
+          "docker exec php sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
+          "docker exec php sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
+          "docker exec php sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
+
+          "docker exec php74 apt update > /dev/null 2>&1"
+          "docker exec php74 apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
+          "docker exec php74 docker-php-ext-install mysqli pdo_mysql zip gd intl bcmath opcache > /dev/null 2>&1"
+          "docker exec php74 pecl install imagick > /dev/null 2>&1"
+          "docker exec php74 sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
+          "docker exec php74 pecl install redis > /dev/null 2>&1"
+          "docker exec php74 sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
+          "docker exec php74 sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
+          "docker exec php74 sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
+          "docker exec php74 sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
+          "docker exec php74 sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
+
+          "docker exec nginx chmod -R 777 /var/www/html"
+          "docker exec php chmod -R 777 /var/www/html"
+          "docker exec php74 chmod -R 777 /var/www/html"
+        #   "docker restart mysql > /dev/null 2>&1"
+        #   "docker restart redis > /dev/null 2>&1"
+          "docker restart php > /dev/null 2>&1"
+          "docker restart php74 > /dev/null 2>&1"
+          "docker restart nginx > /dev/null 2>&1"
+
+      )
+
+      total_commands=${#commands[@]}  # 计算总命令数
+
+      for ((i = 0; i < total_commands; i++)); do
+          command="${commands[i]}"
+          eval $command  # 执行命令
+
+          # 打印百分比和进度条
+          percentage=$(( (i + 1) * 100 / total_commands ))
+          completed=$(( percentage / 2 ))
+          remaining=$(( 50 - completed ))
+          progressBar="["
+          for ((j = 0; j < completed; j++)); do
+              progressBar+="#"
+          done
+          for ((j = 0; j < remaining; j++)); do
+              progressBar+="."
+          done
+          progressBar+="]"
+          echo -ne "\r[$percentage%] $progressBar"
+      done
+
+      echo  # 打印换行，以便输出不被覆盖
+
+
+      clear
+      echo "LDNMP环境安装完毕"
+      echo "------------------------"
+
+      # 获取nginx版本
+      nginx_version=$(docker exec nginx nginx -v 2>&1)
+      nginx_version=$(echo "$nginx_version" | grep -oP "nginx/\K[0-9]+\.[0-9]+\.[0-9]+")
+      echo -n "nginx : v$nginx_version"
+
+      # 获取mysql版本
+      dbrootpasswd=$(grep -oP 'MYSQL_ROOT_PASSWORD:\s*\K.*' /home/web/docker-compose.yml | tr -d '[:space:]')
+      mysql_version=$(docker exec mysql mysql -u root -p"$dbrootpasswd" -e "SELECT VERSION();" 2>/dev/null | tail -n 1)
+      echo -n "            mysql : v$mysql_version"
+
+      # 获取php版本
+      php_version=$(docker exec php php -v 2>/dev/null | grep -oP "PHP \K[0-9]+\.[0-9]+\.[0-9]+")
+      echo -n "            php : v$php_version"
+
+      # 获取redis版本
+      redis_version=$(docker exec redis redis-server -v 2>&1 | grep -oP "v=+\K[0-9]+\.[0-9]+")
+      echo "            redis : v$redis_version"
+
+      echo "------------------------"
+      echo ""
+
+
+}
+
+install_certbot() {
+    if ! command -v certbot &>/dev/null; then
+        if command -v apt &>/dev/null; then
+            apt update -y && apt install -y certbot
+        elif command -v yum &>/dev/null; then
+            yum -y update && yum -y install certbot
+        else
+            echo "未知的包管理器!"
+            break
+        fi
+    fi
+
+    # 切换到一个一致的目录（例如，家目录）
+    cd ~ || exit
+
+    # 下载并使脚本可执行
+    curl -O https://raw.githubusercontent.com/kejilion/sh/main/auto_cert_renewal.sh
+    chmod +x auto_cert_renewal.sh
+
+    # 安排每日午夜运行脚本
+    echo "0 0 * * * cd ~ && ./auto_cert_renewal.sh" | crontab -
+}
+
+install_ssltls() {
+    #   docker stop nginx
+    #   iptables_open
+    #   cd ~
+    #   curl https://get.acme.sh | sh
+    #   ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
+    #   docker start nginx
+
+      docker stop nginx
+      iptables_open
+      cd ~
+      certbot certonly --standalone -d $yuming --email your@email.com --agree-tos --no-eff-email --force-renewal
+      cp /etc/letsencrypt/live/$yuming/cert.pem /home/web/certs/${yuming}_cert.pem
+      cp /etc/letsencrypt/live/$yuming/privkey.pem /home/web/certs/${yuming}_key.pem
+      docker start nginx
+
+}
+
+
+nginx_status() {
+
+    nginx_container_name="nginx"
+
+    # 获取容器的状态
+    container_status=$(docker inspect -f '{{.State.Status}}' "$nginx_container_name" 2>/dev/null)
+
+    # 获取容器的重启状态
+    container_restart_count=$(docker inspect -f '{{.RestartCount}}' "$nginx_container_name" 2>/dev/null)
+
+    # 检查容器是否在运行，并且没有处于"Restarting"状态
+    if [ "$container_status" == "running" ]; then
+        echo ""
+    else
+        rm -r /home/web/html/$yuming >/dev/null 2>&1
+        rm /home/web/conf.d/$yuming.conf >/dev/null 2>&1
+        rm /home/web/certs/${yuming}_key.pem >/dev/null 2>&1
+        rm /home/web/certs/${yuming}_cert.pem >/dev/null 2>&1
+        docker restart nginx >/dev/null 2>&1
+        echo -e "\e[1;31m检测到域名证书申请失败，请检测域名是否正确解析或更换域名重新尝试！\e[0m"
+    fi
+
+}
+
+
+install_lrzsz() {
+    if ! command -v lrzsz &>/dev/null; then
+        if command -v apt &>/dev/null; then
+            apt update -y && apt install -y lrzsz
+        elif command -v yum &>/dev/null; then
+            yum -y update && yum -y install lrzsz
+        else
+            echo "未知的包管理器!"
+            break
+        fi
+    fi
+
+}
+
+
+
+
 
 while true; do
 clear
@@ -11,7 +236,7 @@ echo -e "\033[96m_  _ ____  _ _ _    _ ____ _  _ "
 echo "|_/  |___  | | |    | |  | |\ | "
 echo "| \_ |___ _| | |___ | |__| | \| "
 echo "                                "
-echo -e "\033[96m科技lion一键脚本工具 v1.9.9 （支持Ubuntu，Debian，Centos系统）\033[0m"
+echo -e "\033[96m科技lion一键脚本工具 v2.0.6 （支持Ubuntu/Debian/CentOS系统）\033[0m"
 echo "------------------------"
 echo "1. 系统信息查询"
 echo "2. 系统更新"
@@ -27,7 +252,7 @@ echo "11. 常用面板工具 ▶ "
 echo "12. 我的工作区 ▶ "
 echo "13. 系统工具 ▶ "
 echo "------------------------"
-echo "00. 脚本更新日志"
+echo "00. 脚本更新"
 echo "------------------------"
 echo "0. 退出脚本"
 echo "------------------------"
@@ -165,7 +390,7 @@ case $choice in
 
     # Update system on Debian-based systems
     if [ -f "/etc/debian_version" ]; then
-        DEBIAN_FRONTEND=noninteractive apt update -y && DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
+        apt update -y && apt full-upgrade -y
     fi
 
     # Update system on Red Hat-based systems
@@ -369,17 +594,7 @@ case $choice in
 
   5)
     clear
-    # 检查并安装 wget（如果需要）
-    if ! command -v wget &>/dev/null; then
-        if command -v apt &>/dev/null; then
-            apt update -y && apt install -y wget
-        elif command -v yum &>/dev/null; then
-            yum -y update && yum -y install wget
-        else
-            echo "未知的包管理器!"
-            exit 1
-        fi
-    fi
+    install_wget
     wget --no-check-certificate -O tcpx.sh https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcpx.sh
     chmod +x tcpx.sh
     ./tcpx.sh
@@ -769,18 +984,7 @@ case $choice in
 
   7)
     clear
-    # 检查并安装 wget（如果需要）
-    if ! command -v wget &>/dev/null; then
-        if command -v apt &>/dev/null; then
-            apt update -y && apt install -y wget
-        elif command -v yum &>/dev/null; then
-            yum -y update && yum -y install wget
-        else
-            echo "未知的包管理器!"
-            exit 1
-        fi
-    fi
-    # wget -N https://raw.githubusercontent.com/fscarmen/warp/main/menu.sh && bash menu.sh [option] [lisence]
+    install_wget
     wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh [option] [lisence/url/token]
     ;;
 
@@ -816,10 +1020,12 @@ case $choice in
               ;;
           3)
               clear
+              install_wget
               wget -qO- https://github.com/yeahwu/check/raw/main/check.sh | bash
               ;;
           4)
               clear
+              install_wget
               wget -qO- git.io/besttrace | bash
               ;;
           5)
@@ -886,14 +1092,7 @@ case $choice in
               case "$choice" in
                 [Yy])
 
-                  # 检查并安装 Docker（如果需要）
-                  if ! command -v docker &>/dev/null; then
-                      curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                      systemctl start docker
-                      systemctl enable docker
-                  else
-                      echo "Docker 已经安装，正在部署容器……"
-                  fi
+                  install_docker
 
                   docker run -itd --name=lookbusy --restart=always \
                           -e TZ=Asia/Shanghai \
@@ -943,13 +1142,7 @@ case $choice in
               done
 
               read -p "请输入你重装后的密码: " vpspasswd
-              if command -v apt &>/dev/null; then
-                  apt update -y && apt install -y wget
-              elif command -v yum &>/dev/null; then
-                  yum -y update && yum -y install wget
-              else
-                  echo "未知的包管理器!"
-              fi
+              install_wget
               bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') $xitong -v 64 -p $vpspasswd -port 22
               ;;
             [Nn])
@@ -1023,8 +1216,10 @@ case $choice in
     echo  "10. 安装Halo博客网站"
     echo  "11. 安装typecho轻量博客网站"
     echo  "------------------------"
-    echo  "21. 站点重定向"
-    echo  "22. 站点反向代理"
+    echo -e "21. 仅安装nginx \033[33mNEW\033[0m"
+    echo  "22. 站点重定向"
+    echo  "23. 站点反向代理"
+    echo -e "24. 自定义静态站点 \033[36mBeta\033[0m"
     echo  "------------------------"
     echo  "31. 站点数据管理"
     echo  "32. 备份全站数据"
@@ -1033,7 +1228,7 @@ case $choice in
     echo  "------------------------"
     echo  "35. 站点防御程序"
     echo  "------------------------"
-    echo -e "36. 优化LDNMP环境 \033[33mNEW\033[0m"
+    echo  "36. 优化LDNMP环境"
     echo  "37. 更新LDNMP环境"
     echo  "38. 卸载LDNMP环境"
     echo  "------------------------"
@@ -1045,26 +1240,25 @@ case $choice in
     case $sub_choice in
       1)
       clear
-
       # 更新并安装必要的软件包
       if command -v apt &>/dev/null; then
-          DEBIAN_FRONTEND=noninteractive apt update -y
-          DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
+          apt update -y
           apt install -y curl wget sudo socat unzip tar htop
       elif command -v yum &>/dev/null; then
-          yum -y update && yum -y install curl wget sudo socat unzip tar htop
+          yum -y update
+          yum -y install curl
+          yum -y install wget
+          yum -y install sudo
+          yum -y install socat
+          yum -y install unzip
+          yum -y install tar
+          yum -y install htop
       else
           echo "未知的包管理器!"
       fi
 
-      # 检查并安装 Docker（如果需要）
-      if ! command -v docker &>/dev/null; then
-          curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-          systemctl start docker
-          systemctl enable docker
-      else
-          echo "Docker 已经安装"
-      fi
+      install_docker
+      install_certbot
 
       # 创建必要的目录和文件
       cd /home && mkdir -p web/html web/mysql web/certs web/conf.d web/redis web/log/nginx && touch web/docker-compose.yml
@@ -1084,114 +1278,19 @@ case $choice in
       sed -i "s/kejilionYYDS/$dbusepasswd/g" /home/web/docker-compose.yml
       sed -i "s/kejilion/$dbuse/g" /home/web/docker-compose.yml
 
-      if ! command -v iptables &> /dev/null; then
-      echo ""
-      else
-          # iptables命令
-          iptables -P INPUT ACCEPT
-          iptables -P FORWARD ACCEPT
-          iptables -P OUTPUT ACCEPT
-          iptables -F
-      fi
-
-      cd /home/web && docker-compose up -d
-
-
-      clear
-      echo "正在配置LDNMP环境，请耐心稍等……"
-
-      # 定义要执行的命令
-      commands=(
-          "docker exec php apt update > /dev/null 2>&1"
-          "docker exec php apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
-          "docker exec php docker-php-ext-install mysqli pdo_mysql zip exif gd intl bcmath opcache > /dev/null 2>&1"
-          "docker exec php pecl install imagick > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
-          "docker exec php pecl install redis > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-
-          "docker exec php74 apt update > /dev/null 2>&1"
-          "docker exec php74 apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
-          "docker exec php74 docker-php-ext-install mysqli pdo_mysql zip gd intl bcmath opcache > /dev/null 2>&1"
-          "docker exec php74 pecl install imagick > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
-          "docker exec php74 pecl install redis > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-
-      )
-
-      total_commands=${#commands[@]}  # 计算总命令数
-
-      for ((i = 0; i < total_commands; i++)); do
-          command="${commands[i]}"
-          eval $command  # 执行命令
-
-          # 打印百分比和进度条
-          percentage=$(( (i + 1) * 100 / total_commands ))
-          completed=$(( percentage / 2 ))
-          remaining=$(( 50 - completed ))
-          progressBar="["
-          for ((j = 0; j < completed; j++)); do
-              progressBar+="#"
-          done
-          for ((j = 0; j < remaining; j++)); do
-              progressBar+="."
-          done
-          progressBar+="]"
-          echo -ne "\r[$percentage%] $progressBar"
-      done
-
-      echo  # 打印换行，以便输出不被覆盖
-
-
-      clear
-      echo "LDNMP环境安装完毕"
-      echo "------------------------"
-
-      # 获取nginx版本
-      nginx_version=$(docker exec nginx nginx -v 2>&1)
-      nginx_version=$(echo "$nginx_version" | grep -oP "nginx/\K[0-9]+\.[0-9]+\.[0-9]+")
-      echo -n "nginx : v$nginx_version"
-
-      # 获取mysql版本
-      dbrootpasswd=$(grep -oP 'MYSQL_ROOT_PASSWORD:\s*\K.*' /home/web/docker-compose.yml | tr -d '[:space:]')
-      mysql_version=$(docker exec mysql mysql -u root -p"$dbrootpasswd" -e "SELECT VERSION();" 2>/dev/null | tail -n 1)
-      echo -n "            mysql : v$mysql_version"
-
-      # 获取php版本
-      php_version=$(docker exec php php -v 2>/dev/null | grep -oP "PHP \K[0-9]+\.[0-9]+\.[0-9]+")
-      echo -n "            php : v$php_version"
-
-      # 获取redis版本
-      redis_version=$(docker exec redis redis-server -v 2>&1 | grep -oP "v=+\K[0-9]+\.[0-9]+")
-      echo "            redis : v$redis_version"
-
-      echo "------------------------"
-      echo ""
+      install_ldnmp
 
         ;;
       2)
       clear
       # wordpress
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
       dbname=$(echo "$yuming" | sed -e 's/[^A-Za-z0-9]/_/g')
       dbname="${dbname}"
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/wordpress.com.conf
       sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
@@ -1228,22 +1327,18 @@ case $choice in
       echo "密码: $dbusepasswd"
       echo "数据库主机: mysql"
       echo "表前缀: wp_"
-
+      nginx_status
         ;;
+
       3)
       clear
       # Discuz论坛
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
       dbname=$(echo "$yuming" | sed -e 's/[^A-Za-z0-9]/_/g')
       dbname="${dbname}"
-
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/discuz.com.conf
 
@@ -1280,27 +1375,21 @@ case $choice in
       echo "用户名: $dbuse"
       echo "密码: $dbusepasswd"
       echo "表前缀: discuz_"
-
+      nginx_status
 
         ;;
 
       4)
       clear
       # 可道云桌面
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
       dbname=$(echo "$yuming" | sed -e 's/[^A-Za-z0-9]/_/g')
       dbname="${dbname}"
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
-
+      install_ssltls
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/kdy.com.conf
-
       sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
 
       cd /home/web/html
@@ -1334,22 +1423,19 @@ case $choice in
       echo "密码: $dbusepasswd"
       echo "数据库名: $dbname"
       echo "redis主机: redis"
+      nginx_status
         ;;
 
       5)
       clear
       # 苹果CMS
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
       dbname=$(echo "$yuming" | sed -e 's/[^A-Za-z0-9]/_/g')
       dbname="${dbname}"
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/maccms.com.conf
 
@@ -1392,23 +1478,19 @@ case $choice in
       echo "------------------------"
       echo "安装成功后登录后台地址"
       echo "https://$yuming/vip.php"
-      echo ""
+      nginx_status
         ;;
 
       6)
       clear
       # 独脚数卡
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
       dbname=$(echo "$yuming" | sed -e 's/[^A-Za-z0-9]/_/g')
       dbname="${dbname}"
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/dujiaoka.com.conf
 
@@ -1457,21 +1539,17 @@ case $choice in
       echo "登录时右上角如果出现红色error0请使用如下命令: "
       echo "我也很气愤独角数卡为啥这么麻烦，会有这样的问题！"
       echo "sed -i 's/ADMIN_HTTPS=false/ADMIN_HTTPS=true/g' /home/web/html/$yuming/dujiaoka/.env"
-      echo ""
+      nginx_status
         ;;
 
       7)
       clear
       # BingChat
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       docker run -d -p 3099:8080 --name go-proxy-bingai --restart=unless-stopped adams549659584/go-proxy-bingai
 
@@ -1488,23 +1566,19 @@ case $choice in
       clear
       echo "您的BingChat网站搭建好了！"
       echo "https://$yuming"
-      echo ""
+      nginx_status
         ;;
 
       8)
       clear
       # flarum论坛
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
       dbname=$(echo "$yuming" | sed -e 's/[^A-Za-z0-9]/_/g')
       dbname="${dbname}"
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/flarum.com.conf
 
@@ -1548,21 +1622,17 @@ case $choice in
       echo "密码: $dbusepasswd"
       echo "表前缀: flarum_"
       echo "管理员信息自行设置"
-      echo ""
+      nginx_status
         ;;
 
       9)
       clear
       # Bitwarden
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       docker run -d \
         --name bitwarden \
@@ -1584,7 +1654,7 @@ case $choice in
       clear
       echo "您的Bitwarden网站搭建好了！"
       echo "https://$yuming"
-      echo ""
+      nginx_status
         ;;
 
       10)
@@ -1592,13 +1662,7 @@ case $choice in
       # Bitwarden
       read -p "请输入你解析的域名: " yuming
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       docker run -d --name halo --restart always --network web_default -p 8010:8090 -v /home/web/html/$yuming/.halo2:/root/.halo2 halohub/halo:2.9
 
@@ -1615,23 +1679,19 @@ case $choice in
       clear
       echo "您的Halo网站搭建好了！"
       echo "https://$yuming"
-      echo ""
+      nginx_status
         ;;
 
       11)
       clear
       # typecho
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你解析的域名: " yuming
       dbname=$(echo "$yuming" | sed -e 's/[^A-Za-z0-9]/_/g')
       dbname="${dbname}"
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-
-      docker start nginx
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/typecho.com.conf
       sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
@@ -1667,59 +1727,124 @@ case $choice in
       echo "用户名: $dbuse"
       echo "密码: $dbusepasswd"
       echo "数据库名: $dbname"
-
+      nginx_status
         ;;
-
 
 
       21)
       clear
+      if command -v apt &>/dev/null; then
+          apt update -y
+          apt install -y curl wget sudo socat unzip tar htop
+      elif command -v yum &>/dev/null; then
+          yum -y update
+          yum -y install curl
+          yum -y install wget
+          yum -y install sudo
+          yum -y install socat
+          yum -y install unzip
+          yum -y install tar
+          yum -y install htop
+      else
+          echo "未知的包管理器!"
+      fi
+
+      install_docker
+      install_certbot
+
+      cd /home && mkdir -p web/html web/mysql web/certs web/conf.d web/redis web/log/nginx && touch web/docker-compose.yml
+
+      wget -O /home/web/nginx.conf https://raw.githubusercontent.com/kejilion/nginx/main/nginx10.conf
+      wget -O /home/web/conf.d/default.conf https://raw.githubusercontent.com/kejilion/nginx/main/default10.conf
+      localhostIP=$(curl -s ipv4.ip.sb)
+      sed -i "s/localhost/$localhostIP/g" /home/web/conf.d/default.conf
+
+      docker rm -f nginx >/dev/null 2>&1
+      docker rmi nginx >/dev/null 2>&1
+      docker run -d --name nginx --restart always -p 80:80 -p 443:443 -v /home/web/nginx.conf:/etc/nginx/nginx.conf -v /home/web/conf.d:/etc/nginx/conf.d -v /home/web/certs:/etc/nginx/certs -v /home/web/html:/var/www/html -v /home/web/log/nginx:/var/log/nginx nginx
+
+      clear
+      nginx_version=$(docker exec nginx nginx -v 2>&1)
+      nginx_version=$(echo "$nginx_version" | grep -oP "nginx/\K[0-9]+\.[0-9]+\.[0-9]+")
+      echo "nginx已安装完成"
+      echo "当前版本: v$nginx_version"
+      echo ""
+        ;;
+
+      22)
+      clear
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你的域名: " yuming
       read -p "请输入跳转域名: " reverseproxy
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/rewrite.conf
       sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
       sed -i "s/baidu.com/$reverseproxy/g" /home/web/conf.d/$yuming.conf
 
-      docker start nginx
+      docker restart nginx
 
       clear
       echo "您的重定向网站做好了！"
       echo "https://$yuming"
+      nginx_status
 
         ;;
 
-      22)
+      23)
       clear
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
       read -p "请输入你的域名: " yuming
       read -p "请输入你的反代IP: " reverseproxy
       read -p "请输入你的反代端口: " port
 
-      docker stop nginx
-
-      cd ~
-      curl https://get.acme.sh | sh
-      ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
+      install_ssltls
 
       wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/reverse-proxy.conf
       sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
       sed -i "s/0.0.0.0/$reverseproxy/g" /home/web/conf.d/$yuming.conf
       sed -i "s/0000/$port/g" /home/web/conf.d/$yuming.conf
 
-      docker start nginx
+      docker restart nginx
 
       clear
       echo "您的反向代理网站做好了！"
       echo "https://$yuming"
-
+      nginx_status
         ;;
 
+      24)
+      clear
+      # wordpress
+      external_ip=$(curl -s ipv4.ip.sb)
+      echo -e "先将域名解析到本机IP: \033[33m$external_ip\033[0m"
+      read -p "请输入你解析的域名: " yuming
+      install_ssltls
+
+      wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/html.conf
+      sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
+
+      cd /home/web/html
+      mkdir $yuming
+      cd $yuming
+
+      install_lrzsz
+      clear
+      echo -e "目前只允许上传\033[33mindex.html\033[0m文件，请提前准备好，按任意键继续..."
+      read -n 1 -s -r -p ""
+      rz
+
+      docker exec nginx chmod -R 777 /var/www/html
+      docker restart nginx
+
+      clear
+      echo "您的静态网站搭建好了！"
+      echo "https://$yuming"
+      nginx_status
+        ;;
 
     31)
     while true; do
@@ -1767,7 +1892,8 @@ case $choice in
         echo ""
         echo "操作"
         echo "------------------------"
-        echo "1. 申请/更新域名证书               2. 更换站点域名               3. 清理站点缓存"
+        echo "1. 申请/更新域名证书               2. 更换站点域名"
+        echo -e "3. 清理站点缓存                    4. 查看站点分析报告 \033[33mNEW\033[0m"
         echo "------------------------"
         echo "7. 删除指定站点                    8. 删除指定数据库"
         echo "------------------------"
@@ -1777,32 +1903,20 @@ case $choice in
         case $sub_choice in
             1)
                 read -p "请输入你的域名: " yuming
-
-                docker stop nginx
-
-                cd ~
-                curl https://get.acme.sh | sh
-                ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $yuming --standalone --key-file /home/web/certs/${yuming}_key.pem --cert-file /home/web/certs/${yuming}_cert.pem --force
-                docker start nginx
+                install_ssltls
 
                 ;;
 
             2)
                 read -p "请输入旧域名: " oddyuming
-                read -p "请输入新域名: " newyuming
-                mv /home/web/conf.d/$oddyuming.conf /home/web/conf.d/$newyuming.conf
-                sed -i "s/$oddyuming/$newyuming/g" /home/web/conf.d/$newyuming.conf
-                mv /home/web/html/$oddyuming /home/web/html/$newyuming
+                read -p "请输入新域名: " yuming
+                mv /home/web/conf.d/$oddyuming.conf /home/web/conf.d/$yuming.conf
+                sed -i "s/$oddyuming/$yuming/g" /home/web/conf.d/$yuming.conf
+                mv /home/web/html/$oddyuming /home/web/html/$yuming
 
                 rm /home/web/certs/${oddyuming}_key.pem
                 rm /home/web/certs/${oddyuming}_cert.pem
-
-                docker stop nginx
-
-                cd ~
-                curl https://get.acme.sh | sh
-                ~/.acme.sh/acme.sh --register-account -m xxxx@gmail.com --issue -d $newyuming --standalone --key-file /home/web/certs/${newyuming}_key.pem --cert-file /home/web/certs/${newyuming}_cert.pem --force
-                docker start nginx
+                install_ssltls
 
                 ;;
 
@@ -1811,6 +1925,20 @@ case $choice in
                 docker exec -it nginx rm -rf /var/cache/nginx
                 docker restart nginx
                 ;;
+            4)
+                if ! command -v goaccess &>/dev/null; then
+                    if command -v apt &>/dev/null; then
+                        apt update -y && apt install -y goaccess
+                    elif command -v yum &>/dev/null; then
+                        yum -y update && yum -y install goaccess
+                    else
+                        echo "未知的包管理器!"
+                        break
+                    fi
+                fi
+                goaccess --log-format=COMBINED /home/web/log/nginx/access.log
+
+                ;;
 
             7)
                 read -p "请输入你的域名: " yuming
@@ -1818,6 +1946,7 @@ case $choice in
                 rm /home/web/conf.d/$yuming.conf
                 rm /home/web/certs/${yuming}_key.pem
                 rm /home/web/certs/${yuming}_cert.pem
+                docker restart nginx
                 ;;
             8)
                 read -p "请输入数据库名: " shujuku
@@ -1900,17 +2029,7 @@ case $choice in
               ;;
       esac
 
-      if ! command -v sshpass &>/dev/null; then
-          if command -v apt &>/dev/null; then
-              apt update -y && apt install -y sshpass
-          elif command -v yum &>/dev/null; then
-              yum -y update && yum -y install sshpass
-          else
-              echo "未知的包管理器!"
-          fi
-      else
-          echo "sshpass 已经安装，跳过安装步骤。"
-      fi
+      install_sshpass
 
       ;;
 
@@ -1918,117 +2037,25 @@ case $choice in
       clear
       cd /home/ && ls -t /home/*.tar.gz | head -1 | xargs -I {} tar -xzf {}
 
-      # 更新并安装必要的软件包
       if command -v apt &>/dev/null; then
-          DEBIAN_FRONTEND=noninteractive apt update -y
-          DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
+          apt update -y
           apt install -y curl wget sudo socat unzip tar htop
       elif command -v yum &>/dev/null; then
-          yum -y update && yum -y install curl wget sudo socat unzip tar htop
+          yum -y update
+          yum -y install curl
+          yum -y install wget
+          yum -y install sudo
+          yum -y install socat
+          yum -y install unzip
+          yum -y install tar
+          yum -y install htop
       else
           echo "未知的包管理器!"
       fi
 
-      # 检查并安装 Docker（如果需要）
-      if ! command -v docker &>/dev/null; then
-          curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-          systemctl start docker
-          systemctl enable docker
-      else
-          echo "Docker 已经安装"
-      fi
-
-      cd /home/web && docker-compose up -d
-
-      clear
-      echo "正在配置LDNMP环境，请耐心稍等……"
-
-      # 定义要执行的命令
-      commands=(
-          "docker exec php apt update > /dev/null 2>&1"
-          "docker exec php apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
-          "docker exec php docker-php-ext-install mysqli pdo_mysql zip exif gd intl bcmath opcache > /dev/null 2>&1"
-          "docker exec php pecl install imagick > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
-          "docker exec php pecl install redis > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-
-          "docker exec php74 apt update > /dev/null 2>&1"
-          "docker exec php74 apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
-          "docker exec php74 docker-php-ext-install mysqli pdo_mysql zip gd intl bcmath opcache > /dev/null 2>&1"
-          "docker exec php74 pecl install imagick > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
-          "docker exec php74 pecl install redis > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-
-          "docker exec nginx chmod -R 777 /var/www/html > /dev/null 2>&1"
-          "docker exec php chmod -R 777 /var/www/html > /dev/null 2>&1"
-          "docker exec php74 chmod -R 777 /var/www/html > /dev/null 2>&1"
-
-          "docker restart php > /dev/null 2>&1"
-          "docker restart php74 > /dev/null 2>&1"
-          "docker restart nginx > /dev/null 2>&1"
-
-      )
-
-      total_commands=${#commands[@]}  # 计算总命令数
-
-      for ((i = 0; i < total_commands; i++)); do
-          command="${commands[i]}"
-          eval $command  # 执行命令
-
-          # 打印百分比和进度条
-          percentage=$(( (i + 1) * 100 / total_commands ))
-          completed=$(( percentage / 2 ))
-          remaining=$(( 50 - completed ))
-          progressBar="["
-          for ((j = 0; j < completed; j++)); do
-              progressBar+="#"
-          done
-          for ((j = 0; j < remaining; j++)); do
-              progressBar+="."
-          done
-          progressBar+="]"
-          echo -ne "\r[$percentage%] $progressBar"
-      done
-
-      echo  # 打印换行，以便输出不被覆盖
-
-
-
-      clear
-      echo "LDNMP环境安装完毕"
-      echo "------------------------"
-
-      # 获取nginx版本
-      nginx_version=$(docker exec nginx nginx -v 2>&1)
-      nginx_version=$(echo "$nginx_version" | grep -oP "nginx/\K[0-9]+\.[0-9]+\.[0-9]+")
-      echo -n "nginx : v$nginx_version"
-
-      # 获取mysql版本
-      dbrootpasswd=$(grep -oP 'MYSQL_ROOT_PASSWORD:\s*\K.*' /home/web/docker-compose.yml | tr -d '[:space:]')
-      mysql_version=$(docker exec mysql mysql -u root -p"$dbrootpasswd" -e "SELECT VERSION();" 2>/dev/null | tail -n 1)
-      echo -n "            mysql : v$mysql_version"
-
-      # 获取php版本
-      php_version=$(docker exec php php -v 2>/dev/null | grep -oP "PHP \K[0-9]+\.[0-9]+\.[0-9]+")
-      echo -n "            php : v$php_version"
-
-      # 获取redis版本
-      redis_version=$(docker exec redis redis-server -v 2>&1 | grep -oP "v=+\K[0-9]+\.[0-9]+")
-      echo "            redis : v$redis_version"
-
-      echo "------------------------"
-      echo ""
-
+      install_docker
+      install_certbot
+      install_ldnmp
 
       ;;
 
@@ -2261,118 +2288,18 @@ case $choice in
       docker rm -f nginx php php74 mysql redis
       docker rmi nginx php:fpm php:7.4.33-fpm mysql redis
 
-      # 更新并安装必要的软件包
       if command -v apt &>/dev/null; then
-          DEBIAN_FRONTEND=noninteractive apt update -y
-          DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
-          apt install -y curl wget sudo socat unzip tar htop
+          apt update -y
+          apt upgrade -y
       elif command -v yum &>/dev/null; then
-          yum -y update && yum -y install curl wget sudo socat unzip tar htop
+          yum -y update
       else
           echo "未知的包管理器!"
       fi
 
-      # 检查并安装 Docker（如果需要）
-      if ! command -v docker &>/dev/null; then
-          curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-          systemctl start docker
-          systemctl enable docker
-      else
-          echo "Docker 已经安装"
-      fi
-
-      cd /home/web && docker-compose up -d
-
-      clear
-      echo "正在配置LDNMP环境，请耐心稍等……"
-
-      # 定义要执行的命令
-      commands=(
-          "docker exec php apt update > /dev/null 2>&1"
-          "docker exec php apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
-          "docker exec php docker-php-ext-install mysqli pdo_mysql zip exif gd intl bcmath opcache > /dev/null 2>&1"
-          "docker exec php pecl install imagick > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
-          "docker exec php pecl install redis > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-          "docker exec php sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-
-          "docker exec php74 apt update > /dev/null 2>&1"
-          "docker exec php74 apt install -y libmariadb-dev-compat libmariadb-dev libzip-dev libmagickwand-dev imagemagick > /dev/null 2>&1"
-          "docker exec php74 docker-php-ext-install mysqli pdo_mysql zip gd intl bcmath opcache > /dev/null 2>&1"
-          "docker exec php74 pecl install imagick > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"extension=imagick.so\" > /usr/local/etc/php/conf.d/imagick.ini' > /dev/null 2>&1"
-          "docker exec php74 pecl install redis > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"extension=redis.so\" > /usr/local/etc/php/conf.d/docker-php-ext-redis.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"upload_max_filesize=50M \\n post_max_size=50M\" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-          "docker exec php74 sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-
-          "docker exec nginx chmod -R 777 /var/www/html > /dev/null 2>&1"
-          "docker exec php chmod -R 777 /var/www/html > /dev/null 2>&1"
-          "docker exec php74 chmod -R 777 /var/www/html > /dev/null 2>&1"
-
-          "docker restart php > /dev/null 2>&1"
-          "docker restart php74 > /dev/null 2>&1"
-          "docker restart nginx > /dev/null 2>&1"
-
-      )
-
-      total_commands=${#commands[@]}  # 计算总命令数
-
-      for ((i = 0; i < total_commands; i++)); do
-          command="${commands[i]}"
-          eval $command  # 执行命令
-
-          # 打印百分比和进度条
-          percentage=$(( (i + 1) * 100 / total_commands ))
-          completed=$(( percentage / 2 ))
-          remaining=$(( 50 - completed ))
-          progressBar="["
-          for ((j = 0; j < completed; j++)); do
-              progressBar+="#"
-          done
-          for ((j = 0; j < remaining; j++)); do
-              progressBar+="."
-          done
-          progressBar+="]"
-          echo -ne "\r[$percentage%] $progressBar"
-      done
-
-      echo  # 打印换行，以便输出不被覆盖
-
-      docker exec nginx chmod -R 777 /var/www/html
-      docker exec php chmod -R 777 /var/www/html
-      docker exec php74 chmod -R 777 /var/www/html
-      docker restart php
-      docker restart php74
-      docker restart nginx
-
-      clear
-      clear
-      echo "LDNMP环境安装完毕"
-      echo "------------------------"
-      # 获取nginx版本
-      nginx_version=$(docker exec nginx nginx -v 2>&1)
-      nginx_version=$(echo "$nginx_version" | grep -oP "nginx/\K[0-9]+\.[0-9]+\.[0-9]+")
-      echo -n "nginx : v$nginx_version"
-      # 获取mysql版本
-      dbrootpasswd=$(grep -oP 'MYSQL_ROOT_PASSWORD:\s*\K.*' /home/web/docker-compose.yml | tr -d '[:space:]')
-      mysql_version=$(docker exec mysql mysql -u root -p"$dbrootpasswd" -e "SELECT VERSION();" 2>/dev/null | tail -n 1)
-      echo -n "            mysql : v$mysql_version"
-      # 获取php版本
-      php_version=$(docker exec php php -v 2>/dev/null | grep -oP "PHP \K[0-9]+\.[0-9]+\.[0-9]+")
-      echo -n "            php : v$php_version"
-      # 获取redis版本
-      redis_version=$(docker exec redis redis-server -v 2>&1 | grep -oP "v=+\K[0-9]+\.[0-9]+")
-      echo "            redis : v$redis_version"
-      echo "------------------------"
-      echo ""
-
+      install_docker
+      install_certbot
+      install_ldnmp
       ;;
 
 
@@ -2428,7 +2355,8 @@ case $choice in
       echo "13. Cloudreve网盘系统                   14. 简单图床图片管理程序"
       echo "15. emby多媒体管理系统                  16. Speedtest测速服务面板"
       echo "17. AdGuardHome去广告软件               18. onlyoffice在线办公OFFICE"
-      echo "19. 雷池WAF防火墙面板"
+      echo "19. 雷池WAF防火墙面板                   20. portainer容器管理面板"
+      echo "21. VScode网页版"
       echo "------------------------"
       echo "0. 返回主菜单"
       echo "------------------------"
@@ -2500,26 +2428,8 @@ case $choice in
                     read -p "确定安装宝塔吗？(Y/N): " choice
                     case "$choice" in
                         [Yy])
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-                            if ! command -v wget &>/dev/null; then
-                                if command -v apt &>/dev/null; then
-                                    apt update -y && apt install -y wget
-                                elif command -v yum &>/dev/null; then
-                                    yum -y update && yum -y install wget
-                                else
-                                    echo "未知的包管理器!"
-                                    exit 1
-                                fi
-                            fi
+                            iptables_open
+                            install_wget
                             if [ "$system_type" == "centos" ]; then
                                 yum install -y wget && wget -O install.sh https://download.bt.cn/install/install_6.0.sh && sh install.sh ed8484bec
                             elif [ "$system_type" == "ubuntu" ]; then
@@ -2602,26 +2512,8 @@ case $choice in
                     read -p "确定安装aaPanel吗？(Y/N): " choice
                     case "$choice" in
                         [Yy])
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-                            if ! command -v wget &>/dev/null; then
-                                if command -v apt &>/dev/null; then
-                                    apt update -y && apt install -y wget
-                                elif command -v yum &>/dev/null; then
-                                    yum -y update && yum -y install wget
-                                else
-                                    echo "未知的包管理器!"
-                                    exit 1
-                                fi
-                            fi
+                            iptables_open
+                            install_wget
                             if [ "$system_type" == "centos" ]; then
                                 yum install -y wget && wget -O install.sh http://www.aapanel.com/script/install_6.0_en.sh && bash install.sh aapanel
                             elif [ "$system_type" == "ubuntu" ]; then
@@ -2671,16 +2563,7 @@ case $choice in
               read -p "确定安装1Panel吗？(Y/N): " choice
               case "$choice" in
                 [Yy])
-                  if ! command -v iptables &> /dev/null; then
-                  echo ""
-                  else
-                      # iptables命令
-                      iptables -P INPUT ACCEPT
-                      iptables -P FORWARD ACCEPT
-                      iptables -P OUTPUT ACCEPT
-                      iptables -F
-                  fi
-
+                  iptables_open
                   if [ "$system_type" == "centos" ]; then
                     curl -sSL https://resource.fit2cloud.com/1panel/package/quick_start.sh -o quick_start.sh && sh quick_start.sh
                   elif [ "$system_type" == "ubuntu" ]; then
@@ -2716,25 +2599,8 @@ case $choice in
                             clear
                             docker rm -f npm
                             docker rmi -f jc21/nginx-proxy-manager:latest
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
 
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
+                            install_docker
 
                             docker run -d \
                               --name=npm \
@@ -2782,25 +2648,7 @@ case $choice in
                   case "$choice" in
                     [Yy])
                       clear
-                      if ! command -v iptables &> /dev/null; then
-                      echo ""
-                      else
-                          # iptables命令
-                          iptables -P INPUT ACCEPT
-                          iptables -P FORWARD ACCEPT
-                          iptables -P OUTPUT ACCEPT
-                          iptables -F
-                      fi
-
-
-                      # 检查并安装 Docker（如果需要）
-                      if ! command -v docker &>/dev/null; then
-                          curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                          systemctl start docker
-                          systemctl enable docker
-                      else
-                          echo "Docker 已经安装，正在部署容器……"
-                      fi
+                      install_docker
 
                       docker run -d \
                         --name=npm \
@@ -2851,26 +2699,9 @@ case $choice in
                             docker rm -f alist
                             docker rmi -f xhofe/alist:latest
 
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
                             # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
 
+                            install_docker
                             docker run -d \
                                 --restart=always \
                                 -v /home/docker/alist:/opt/alist/data \
@@ -2918,26 +2749,7 @@ case $choice in
                   case "$choice" in
                     [Yy])
                       clear
-                      if ! command -v iptables &> /dev/null; then
-                      echo ""
-                      else
-                          # iptables命令
-                          iptables -P INPUT ACCEPT
-                          iptables -P FORWARD ACCEPT
-                          iptables -P OUTPUT ACCEPT
-                          iptables -F
-                      fi
-
-
-                      # 检查并安装 Docker（如果需要）
-                      if ! command -v docker &>/dev/null; then
-                          curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                          systemctl start docker
-                          systemctl enable docker
-                      else
-                          echo "Docker 已经安装，正在部署容器……"
-                      fi
-
+                      install_docker
                       docker run -d \
                           --restart=always \
                           -v /home/docker/alist:/opt/alist/data \
@@ -2989,27 +2801,7 @@ case $choice in
                             docker rm -f ubuntu-novnc
                             docker rmi -f fredblgr/ubuntu-novnc:20.04
                             read -p "请设置一个登录密码: " rootpasswd
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             docker run -d \
                                 --name ubuntu-novnc \
                                 -p 6080:80 \
@@ -3058,28 +2850,7 @@ case $choice in
                     [Yy])
                         clear
                         read -p "请设置一个登录密码: " rootpasswd
-
-                        if ! command -v iptables &> /dev/null; then
-                        echo ""
-                        else
-                            # iptables命令
-                            iptables -P INPUT ACCEPT
-                            iptables -P FORWARD ACCEPT
-                            iptables -P OUTPUT ACCEPT
-                            iptables -F
-                        fi
-
-
-                        # 检查并安装 Docker（如果需要）
-                        if ! command -v docker &>/dev/null; then
-                            curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                            systemctl start docker
-                            systemctl enable docker
-
-                        else
-                            echo "Docker 已经安装，正在部署容器……"
-                        fi
-
+                        install_docker
                         docker run -d \
                             --name ubuntu-novnc \
                             -p 6080:80 \
@@ -3135,27 +2906,8 @@ case $choice in
                             clear
                             docker rm -f qbittorrent
                             docker rmi -f lscr.io/linuxserver/qbittorrent:latest
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            docker rmi -f lscr.io/linuxserver/qbittorrent:4.5.5
+                            install_docker
                             docker run -d \
                                   --name=qbittorrent \
                                   -e PUID=1000 \
@@ -3185,6 +2937,7 @@ case $choice in
                             clear
                             docker rm -f qbittorrent
                             docker rmi -f lscr.io/linuxserver/qbittorrent:latest
+                            docker rmi -f lscr.io/linuxserver/qbittorrent:4.5.5
                             rm -rf /home/docker/qbittorrent
                             echo "应用已卸载"
                             ;;
@@ -3207,26 +2960,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     docker run -d \
                           --name=qbittorrent \
                           -e PUID=1000 \
@@ -3239,7 +2973,7 @@ case $choice in
                           -v /home/docker/qbittorrent/config:/config \
                           -v /home/docker/qbittorrent/downloads:/downloads \
                           --restart unless-stopped \
-                          lscr.io/linuxserver/qbittorrent:latest
+                          lscr.io/linuxserver/qbittorrent:4.5.5
                     clear
                     echo "QB已经安装完成"
                     echo "------------------------"
@@ -3284,27 +3018,7 @@ case $choice in
                             clear
                             docker rm -f mailserver
                             docker rmi -f analogic/poste.io
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             yuming=$(cat /home/docker/mail.txt)
                             docker run \
                                 --net=host \
@@ -3394,24 +3108,7 @@ case $choice in
                     echo "按任意键继续..."
                     read -n 1 -s -r -p ""
 
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
+                    install_docker
 
                     docker run \
                         --net=host \
@@ -3460,27 +3157,8 @@ case $choice in
                         1)
                             clear
                             docker rm -f rocketchat
-                            docker rmi -f rocket.chat
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
+                            docker rmi -f rocket.chat:6.3
+                            install_docker
 
                             docker run --name rocketchat --restart=always -p 3897:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/rs5 -d rocket.chat
 
@@ -3496,8 +3174,10 @@ case $choice in
                             clear
                             docker rm -f rocketchat
                             docker rmi -f rocket.chat
+                            docker rmi -f rocket.chat:6.3
                             docker rm -f db
                             docker rmi -f mongo:latest
+                            # docker rmi -f mongo:6
                             rm -rf /home/docker/mongo
                             echo "应用已卸载"
                             ;;
@@ -3520,33 +3200,14 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     docker run --name db -d --restart=always \
                         -v /home/docker/mongo/dump:/dump \
                         mongo:latest --replSet rs5 --oplogSize 256
                     sleep 1
                     docker exec -it db mongosh --eval "printjson(rs.initiate())"
                     sleep 5
-                    docker run --name rocketchat --restart=always -p 3897:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/rs5 -d rocket.chat
+                    docker run --name rocketchat --restart=always -p 3897:3000 --link db --env ROOT_URL=http://localhost --env MONGO_OPLOG_URL=mongodb://db:27017/rs5 -d rocket.chat:6.3
 
                     clear
 
@@ -3590,27 +3251,7 @@ case $choice in
                             clear
                             docker rm -f zentao-server
                             docker rmi -f idoop/zentao:latest
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             docker run -d -p 82:80 -p 3308:3306 \
                                     -e ADMINER_USER="root" -e ADMINER_PASSWD="password" \
                                     -e BIND_ADDRESS="false" \
@@ -3657,25 +3298,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     docker run -d -p 82:80 -p 3308:3306 \
                             -e ADMINER_USER="root" -e ADMINER_PASSWD="password" \
                             -e BIND_ADDRESS="false" \
@@ -3725,27 +3348,7 @@ case $choice in
                             clear
                             docker rm -f qinglong
                             docker rmi -f whyour/qinglong:latest
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             docker run -d \
                               -v /home/docker/ql/data:/ql/data \
                               -p 5700:5700 \
@@ -3790,25 +3393,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     docker run -d \
                       -v /home/docker/ql/data:/ql/data \
                       -p 5700:5700 \
@@ -3858,27 +3443,7 @@ case $choice in
                             docker rmi -f cloudreve/cloudreve:latest
                             docker rm -f aria2
                             docker rmi -f p3terx/aria2-pro
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             cd /home/ && mkdir -p docker/cloud && cd docker/cloud && mkdir temp_data && mkdir -vp cloudreve/{uploads,avatar} && touch cloudreve/conf.ini && touch cloudreve/cloudreve.db && mkdir -p aria2/config && mkdir -p data/aria2 && chmod -R 777 data/aria2
                             curl -o /home/docker/cloud/docker-compose.yml https://raw.githubusercontent.com/kejilion/docker/main/cloudreve-docker-compose.yml
                             cd /home/docker/cloud/ && docker-compose up -d
@@ -3922,25 +3487,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     cd /home/ && mkdir -p docker/cloud && cd docker/cloud && mkdir temp_data && mkdir -vp cloudreve/{uploads,avatar} && touch cloudreve/conf.ini && touch cloudreve/cloudreve.db && mkdir -p aria2/config && mkdir -p data/aria2 && chmod -R 777 data/aria2
                     curl -o /home/docker/cloud/docker-compose.yml https://raw.githubusercontent.com/kejilion/docker/main/cloudreve-docker-compose.yml
                     cd /home/docker/cloud/ && docker-compose up -d
@@ -3988,28 +3535,7 @@ case $choice in
                             clear
                             docker rm -f easyimage
                             docker rmi -f ddsderek/easyimage:latest
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
-
+                            install_docker
                             docker run -d \
                               --name easyimage \
                               -p 85:80 \
@@ -4055,26 +3581,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
-
+                    install_docker
                     docker run -d \
                       --name easyimage \
                       -p 85:80 \
@@ -4126,27 +3633,7 @@ case $choice in
                             clear
                             docker rm -f emby
                             docker rmi -f linuxserver/emby:latest
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             docker run -d --name=emby --restart=always \
                                 -v /homeo/docker/emby/config:/config \
                                 -v /homeo/docker/emby/share1:/mnt/share1 \
@@ -4190,25 +3677,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     docker run -d --name=emby --restart=always \
                         -v /homeo/docker/emby/config:/config \
                         -v /homeo/docker/emby/share1:/mnt/share1 \
@@ -4259,27 +3728,7 @@ case $choice in
                             clear
                             docker rm -f looking-glass
                             docker rmi -f wikihostinc/looking-glass-server
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             docker run -d --name looking-glass --restart always -p 89:80 wikihostinc/looking-glass-server
 
 
@@ -4316,25 +3765,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     docker run -d --name looking-glass --restart always -p 89:80 wikihostinc/looking-glass-server
 
                     clear
@@ -4376,27 +3807,7 @@ case $choice in
                             clear
                             docker rm -f adguardhome
                             docker rmi -f adguard/adguardhome
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             docker run -d \
                                 --name adguardhome \
                                 -v /home/docker/adguardhome/work:/opt/adguardhome/work \
@@ -4441,24 +3852,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
+                    install_docker
                         docker run -d \
                             --name adguardhome \
                             -v /home/docker/adguardhome/work:/opt/adguardhome/work \
@@ -4510,27 +3904,7 @@ case $choice in
                             clear
                             docker rm -f onlyoffice
                             docker rmi -f onlyoffice/documentserver
-
-                            if ! command -v iptables &> /dev/null; then
-                            echo ""
-                            else
-                                # iptables命令
-                                iptables -P INPUT ACCEPT
-                                iptables -P FORWARD ACCEPT
-                                iptables -P OUTPUT ACCEPT
-                                iptables -F
-                            fi
-
-
-                            # 检查并安装 Docker（如果需要）
-                            if ! command -v docker &>/dev/null; then
-                                curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                                systemctl start docker
-                                systemctl enable docker
-                            else
-                                echo "Docker 已经安装，正在部署容器……"
-                            fi
-
+                            install_docker
                             docker run -d -p 8082:80 \
                                 --restart=always \
                                 --name onlyoffice \
@@ -4572,24 +3946,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
+                    install_docker
                     docker run -d -p 8082:80 \
                         --restart=always \
                         --name onlyoffice \
@@ -4664,25 +4021,7 @@ case $choice in
                 case "$choice" in
                     [Yy])
                     clear
-                    if ! command -v iptables &> /dev/null; then
-                    echo ""
-                    else
-                        # iptables命令
-                        iptables -P INPUT ACCEPT
-                        iptables -P FORWARD ACCEPT
-                        iptables -P OUTPUT ACCEPT
-                        iptables -F
-                    fi
-
-                    # 检查并安装 Docker（如果需要）
-                    if ! command -v docker &>/dev/null; then
-                        curl -fsSL https://get.docker.com | sh && ln -s /usr/libexec/docker/cli-plugins/docker-compose /usr/local/bin
-                        systemctl start docker
-                        systemctl enable docker
-                    else
-                        echo "Docker 已经安装，正在部署容器……"
-                    fi
-
+                    install_docker
                     bash -c "$(curl -fsSLk https://waf-ce.chaitin.cn/release/latest/setup.sh)"
 
                     clear
@@ -4692,6 +4031,187 @@ case $choice in
                     external_ip=$(curl -s ipv4.ip.sb)
                     echo "http:$external_ip:9443"
                     echo ""
+
+                        ;;
+                    [Nn])
+                        ;;
+                    *)
+                        ;;
+                esac
+            fi
+
+              ;;
+
+          20)
+            if docker inspect portainer &>/dev/null; then
+
+                    clear
+                    echo "portainer已安装，访问地址: "
+                    external_ip=$(curl -s ipv4.ip.sb)
+                    echo "http:$external_ip:9050"
+                    echo ""
+
+                    echo "应用操作"
+                    echo "------------------------"
+                    echo "1. 更新应用             2. 卸载应用"
+                    echo "------------------------"
+                    echo "0. 返回上一级选单"
+                    echo "------------------------"
+                    read -p "请输入你的选择: " sub_choice
+
+                    case $sub_choice in
+                        1)
+                            clear
+                            docker rm -f portainer
+                            docker rmi -f portainer/portainer
+                            install_docker
+
+                            docker run -d \
+                            --name portainer \
+                            -p 9050:9000 \
+                            -v /var/run/docker.sock:/var/run/docker.sock \
+                            -v /home/docker/portainer:/data \
+                            --restart always \
+                            portainer/portainer
+
+
+                            clear
+                            echo "portainer已经安装完成"
+                            echo "------------------------"
+                            echo "您可以使用以下地址访问:"
+                            external_ip=$(curl -s ipv4.ip.sb)
+                            echo "http:$external_ip:9050"
+                            echo ""
+                            ;;
+                        2)
+                            clear
+                            docker rm -f portainer
+                            docker rmi -f portainer/portainer
+                            rm -rf /home/docker/portainer
+                            echo "应用已卸载"
+                            ;;
+                        0)
+                            break  # 跳出循环，退出菜单
+                            ;;
+                        *)
+                            break  # 跳出循环，退出菜单
+                            ;;
+                    esac
+            else
+                clear
+                echo "安装提示"
+                echo "portainer是一个轻量级的docker容器管理面板"
+                echo "官网介绍: https://www.portainer.io/"
+                echo ""
+
+                # 提示用户确认安装
+                read -p "确定安装吗？(Y/N): " choice
+                case "$choice" in
+                    [Yy])
+                    clear
+                    install_docker
+
+                    docker run -d \
+                    --name portainer \
+                    -p 9050:9000 \
+                    -v /var/run/docker.sock:/var/run/docker.sock \
+                    -v /home/docker/portainer:/data \
+                    --restart always \
+                    portainer/portainer
+
+                    clear
+                    echo "portainer已经安装完成"
+                    echo "------------------------"
+                    echo "您可以使用以下地址访问:"
+                    external_ip=$(curl -s ipv4.ip.sb)
+                    echo "http:$external_ip:9050"
+                    echo ""
+
+                        ;;
+                    [Nn])
+                        ;;
+                    *)
+                        ;;
+                esac
+            fi
+
+              ;;
+
+          21)
+            if docker inspect vscode-web &>/dev/null; then
+
+                    clear
+                    echo "VScode已安装，访问地址: "
+                    external_ip=$(curl -s ipv4.ip.sb)
+                    echo "http:$external_ip:8180"
+                    echo ""
+
+                    echo "应用操作"
+                    echo "------------------------"
+                    echo "1. 更新应用             2. 卸载应用"
+                    echo "------------------------"
+                    echo "0. 返回上一级选单"
+                    echo "------------------------"
+                    read -p "请输入你的选择: " sub_choice
+
+                    case $sub_choice in
+                        1)
+                            clear
+                            docker rm -f vscode-web
+                            docker rmi -f codercom/code-server
+                            install_docker
+
+                            docker run -d -p 8180:8080 -v /home/docker/code-server:/home/coder/.local/share/code-server --name vscode-web --restart always codercom/code-server
+
+                            clear
+                            echo "VScode已经安装完成"
+                            echo "------------------------"
+                            echo "您可以使用以下地址访问:"
+                            external_ip=$(curl -s ipv4.ip.sb)
+                            echo "http:$external_ip:8180"
+                            echo ""
+                            sleep 3
+                            docker exec vscode-web cat /home/coder/.config/code-server/config.yaml
+
+                            ;;
+                        2)
+                            clear
+                            docker rm -f vscode-web
+                            docker rmi -f codercom/code-server
+                            rm -rf /home/docker/code-server
+                            echo "应用已卸载"
+                            ;;
+                        0)
+                            break  # 跳出循环，退出菜单
+                            ;;
+                        *)
+                            break  # 跳出循环，退出菜单
+                            ;;
+                    esac
+            else
+                clear
+                echo "安装提示"
+                echo "VScode是一款强大的在线代码编写工具"
+                echo "官网介绍: https://github.com/coder/code-server"
+                echo ""
+
+                # 提示用户确认安装
+                read -p "确定安装吗？(Y/N): " choice
+                case "$choice" in
+                    [Yy])
+                    clear
+                    install_docker
+                    docker run -d -p 8180:8080 -v /home/docker/code-server:/home/coder/.local/share/code-server --name vscode-web --restart always codercom/code-server
+
+                    clear
+                    echo "portainer已经安装完成"
+                    echo "------------------------"
+                    echo "您可以使用以下地址访问:"
+                    external_ip=$(curl -s ipv4.ip.sb)
+                    echo "http:$external_ip:8180"
+                    echo ""
+                    sleep 3
+                    docker exec vscode-web cat /home/coder/.config/code-server/config.yaml
 
                         ;;
                     [Nn])
@@ -4880,9 +4400,13 @@ case $choice in
       echo "14. 用户/密码生成器"
       echo "15. 系统时区调整"
       echo "16. 开启BBR3加速"
-      echo -e "17. 防火墙高级管理器 \033[33mNEW\033[0m"
+      echo "17. 防火墙高级管理器"
+      echo "18. 修改主机名"
+      echo -e "19. 切换系统更新源 \033[36mBeta\033[0m"
       echo "------------------------"
       echo "21. 留言板"
+      echo "------------------------"
+      echo "99. 重启服务器"
       echo "------------------------"
       echo "0. 返回主菜单"
       echo "------------------------"
@@ -4892,7 +4416,7 @@ case $choice in
           1)
               clear
               read -p "请输入你的快捷按键: " kuaijiejian
-              echo "alias $kuaijiejian='curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh && chmod +x kejilion.sh && ./kejilion.sh'" >> ~/.bashrc
+              echo "alias $kuaijiejian='./kejilion.sh'" >> ~/.bashrc
               echo "快捷键已添加。请重新启动终端，或运行 'source ~/.bashrc' 以使修改生效。"
               ;;
 
@@ -5009,10 +4533,7 @@ case $choice in
 
           5)
               clear
-              iptables -P INPUT ACCEPT
-              iptables -P FORWARD ACCEPT
-              iptables -P OUTPUT ACCEPT
-              iptables -F
+              iptables_open
 
               apt purge -y iptables-persistent > /dev/null 2>&1
               apt purge -y ufw > /dev/null 2>&1
@@ -5052,10 +4573,7 @@ case $choice in
               echo "SSH 端口已修改为: $new_port"
 
               clear
-              iptables -P INPUT ACCEPT
-              iptables -P FORWARD ACCEPT
-              iptables -P OUTPUT ACCEPT
-              iptables -F
+              iptables_open
 
               apt purge -y iptables-persistent > /dev/null 2>&1
               apt purge -y ufw > /dev/null 2>&1
@@ -5137,13 +4655,7 @@ case $choice in
               done
 
               read -p "请输入你重装后的密码: " vpspasswd
-              if command -v apt &>/dev/null; then
-                  apt update -y && apt install -y wget
-              elif command -v yum &>/dev/null; then
-                  yum -y update && yum -y install wget
-              else
-                  echo "未知的包管理器!"
-              fi
+              install_wget
               bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') $xitong -v 64 -p $vpspasswd -port 22
               ;;
             [Nn])
@@ -5841,10 +5353,7 @@ EOF
             fi
 
           clear
-          iptables -P INPUT ACCEPT
-          iptables -P FORWARD ACCEPT
-          iptables -P OUTPUT ACCEPT
-          iptables -F
+          iptables_open
 
           apt remove -y iptables-persistent
           apt purge -y iptables-persistent
@@ -5885,21 +5394,262 @@ EOF
         fi
               ;;
 
+          18)
+          clear
+          # 获取当前主机名
+          current_hostname=$(hostname)
+
+          echo "当前主机名: $current_hostname"
+
+          # 询问用户是否要更改主机名
+          read -p "是否要更改主机名？(y/n): " answer
+
+          if [ "$answer" == "y" ]; then
+              # 获取新的主机名
+              read -p "请输入新的主机名: " new_hostname
+
+              # 更改主机名
+              if [ -n "$new_hostname" ]; then
+                  # 根据发行版选择相应的命令
+                  if [ -f /etc/debian_version ]; then
+                      # Debian 或 Ubuntu
+                      hostnamectl set-hostname "$new_hostname"
+                      sed -i "s/$current_hostname/$new_hostname/g" /etc/hostname
+                  elif [ -f /etc/redhat-release ]; then
+                      # CentOS
+                      hostnamectl set-hostname "$new_hostname"
+                      sed -i "s/$current_hostname/$new_hostname/g" /etc/hostname
+                  else
+                      echo "未知的发行版，无法更改主机名。"
+                      exit 1
+                  fi
+
+                  # 重启生效
+                  systemctl restart systemd-hostnamed
+                  echo "主机名已更改为: $new_hostname"
+              else
+                  echo "无效的主机名。未更改主机名。"
+                  exit 1
+              fi
+          else
+              echo "未更改主机名。"
+          fi
+
+              ;;
+
+          19)
+
+          # 获取系统信息
+          source /etc/os-release
+
+          # 定义 Ubuntu 更新源
+          aliyun_ubuntu_source="http://mirrors.aliyun.com/ubuntu/"
+          official_ubuntu_source="http://archive.ubuntu.com/ubuntu/"
+          initial_ubuntu_source=""
+
+          # 定义 Debian 更新源
+          aliyun_debian_source="http://mirrors.aliyun.com/debian/"
+          official_debian_source="http://deb.debian.org/debian/"
+          initial_debian_source=""
+
+          # 定义 CentOS 更新源
+          aliyun_centos_source="http://mirrors.aliyun.com/centos/"
+          official_centos_source="http://mirror.centos.org/centos/"
+          initial_centos_source=""
+
+          # 获取当前更新源并设置初始源
+          case "$ID" in
+              ubuntu)
+                  initial_ubuntu_source=$(grep -E '^deb ' /etc/apt/sources.list | head -n 1 | awk '{print $2}')
+                  ;;
+              debian)
+                  initial_debian_source=$(grep -E '^deb ' /etc/apt/sources.list | head -n 1 | awk '{print $2}')
+                  ;;
+              centos)
+                  initial_centos_source=$(awk -F= '/^baseurl=/ {print $2}' /etc/yum.repos.d/CentOS-Base.repo | head -n 1 | tr -d ' ')
+                  ;;
+              *)
+                  echo "未知系统，无法执行切换源脚本"
+                  exit 1
+                  ;;
+          esac
+
+          # 备份当前源
+          backup_sources() {
+              case "$ID" in
+                  ubuntu)
+                      sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+                      ;;
+                  debian)
+                      sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+                      ;;
+                  centos)
+                      if [ ! -f /etc/yum.repos.d/CentOS-Base.repo.bak ]; then
+                          sudo cp /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+                      else
+                          echo "备份已存在，无需重复备份"
+                      fi
+                      ;;
+                  *)
+                      echo "未知系统，无法执行备份操作"
+                      exit 1
+                      ;;
+              esac
+              echo "已备份当前更新源为 /etc/apt/sources.list.bak 或 /etc/yum.repos.d/CentOS-Base.repo.bak"
+          }
+
+          # 还原初始更新源
+          restore_initial_source() {
+              case "$ID" in
+                  ubuntu)
+                      sudo cp /etc/apt/sources.list.bak /etc/apt/sources.list
+                      ;;
+                  debian)
+                      sudo cp /etc/apt/sources.list.bak /etc/apt/sources.list
+                      ;;
+                  centos)
+                      sudo cp /etc/yum.repos.d/CentOS-Base.repo.bak /etc/yum.repos.d/CentOS-Base.repo
+                      ;;
+                  *)
+                      echo "未知系统，无法执行还原操作"
+                      exit 1
+                      ;;
+              esac
+              echo "已还原初始更新源"
+          }
+
+          # 函数：切换更新源
+          switch_source() {
+              case "$ID" in
+                  ubuntu)
+                      sudo sed -i 's|'"$initial_ubuntu_source"'|'"$1"'|g' /etc/apt/sources.list
+                      ;;
+                  debian)
+                      sudo sed -i 's|'"$initial_debian_source"'|'"$1"'|g' /etc/apt/sources.list
+                      ;;
+                  centos)
+                      sudo sed -i "s|^baseurl=.*$|baseurl=$1|g" /etc/yum.repos.d/CentOS-Base.repo
+                      ;;
+                  *)
+                      echo "未知系统，无法执行切换操作"
+                      exit 1
+                      ;;
+              esac
+          }
+
+          # 主菜单
+          while true; do
+              clear
+              case "$ID" in
+                  ubuntu)
+                      echo "Ubuntu 更新源切换脚本"
+                      echo "------------------------"
+                      ;;
+                  debian)
+                      echo "Debian 更新源切换脚本"
+                      echo "------------------------"
+                      ;;
+                  centos)
+                      echo "CentOS 更新源切换脚本"
+                      echo "------------------------"
+                      ;;
+                  *)
+                      echo "未知系统，无法执行脚本"
+                      exit 1
+                      ;;
+              esac
+
+              echo "1. 切换到阿里云源"
+              echo "2. 切换到官方源"
+              echo "------------------------"
+              echo "3. 备份当前更新源"
+              echo "4. 还原初始更新源"
+              echo "------------------------"
+              echo "0. 返回上一级"
+              echo "------------------------"
+              read -p "请选择操作: " choice
+
+              case $choice in
+                  1)
+                      backup_sources
+                      case "$ID" in
+                          ubuntu)
+                              switch_source $aliyun_ubuntu_source
+                              ;;
+                          debian)
+                              switch_source $aliyun_debian_source
+                              ;;
+                          centos)
+                              switch_source $aliyun_centos_source
+                              ;;
+                          *)
+                              echo "未知系统，无法执行切换操作"
+                              exit 1
+                              ;;
+                      esac
+                      echo "已切换到阿里云源"
+                      ;;
+                  2)
+                      backup_sources
+                      case "$ID" in
+                          ubuntu)
+                              switch_source $official_ubuntu_source
+                              ;;
+                          debian)
+                              switch_source $official_debian_source
+                              ;;
+                          centos)
+                              switch_source $official_centos_source
+                              ;;
+                          *)
+                              echo "未知系统，无法执行切换操作"
+                              exit 1
+                              ;;
+                      esac
+                      echo "已切换到官方源"
+                      ;;
+                  3)
+                      backup_sources
+                      case "$ID" in
+                          ubuntu)
+                              switch_source $initial_ubuntu_source
+                              ;;
+                          debian)
+                              switch_source $initial_debian_source
+                              ;;
+                          centos)
+                              switch_source $initial_centos_source
+                              ;;
+                          *)
+                              echo "未知系统，无法执行切换操作"
+                              exit 1
+                              ;;
+                      esac
+                      echo "已切换到初始更新源"
+                      ;;
+                  4)
+                      restore_initial_source
+                      ;;
+                  0)
+                      break
+                      ;;
+                  *)
+                      echo "无效的选择，请重新输入"
+                      ;;
+              esac
+              echo -e "\033[0;32m操作完成\033[0m"
+              echo "按任意键继续..."
+              read -n 1 -s -r -p ""
+              echo ""
+              clear
+          done
+
+              ;;
+
 
           21)
           clear
-          # 检查是否已安装 sshpass
-          if ! command -v sshpass &>/dev/null; then
-              if command -v apt &>/dev/null; then
-                  apt update -y && apt install -y sshpass
-              elif command -v yum &>/dev/null; then
-                  yum -y update && yum -y install sshpass
-              else
-                  echo "未知的包管理器!"
-              fi
-          else
-              echo "sshpass 已经安装，跳过安装步骤。"
-          fi
+          install_sshpass
 
           remote_ip="66.42.61.110"
           remote_user="liaotian123"
@@ -5935,6 +5685,11 @@ EOF
 
               ;;
 
+          99)
+          clear
+          echo "正在重启服务器，即将断开SSH连接"
+          reboot
+              ;;
           0)
               cd ~
               ./kejilion.sh
@@ -5952,223 +5707,19 @@ EOF
     done
     ;;
 
-
   00)
-    clear
-    echo "脚本更新日志"
-    echo  "------------------------"
-    echo "2023-8-13   v1.0.3"
-    echo "1.甲骨文云的DD脚本，添加了Ubuntu 20.04的重装选项。"
-    echo "2.LDNMP建站，开放了苹果CMS网站的搭建功能."
-    echo "3.系统信息查询，增加了内核版本显示，美化了界面。"
-    echo "4.甲骨文脚本中，添加了开启ROOT登录的选项。"
-    echo "------------------------"
-    echo "2023-8-13   v1.0.4"
-    echo "1.LDNMP建站，开放了独角数卡网站的搭建功能."
-    echo "2.LDNMP建站，优化了备份全站到远端服务器的稳定性."
-    echo "3.Docker管理，全局状态信息，添加了所有docker卷的显示."
-    echo "------------------------"
-    echo "2023-8-14   v1.1"
-    echo "Docker管理器全面升级，体验前所未有！"
-    echo "-加入了docker容器管理面板"
-    echo "-加入了docker镜像管理面板"
-    echo "-加入了docker网络管理面板"
-    echo "-加入了docker卷管理面板"
-    echo "-删除docker时追加确认信息，拒绝误操作"
-    echo "------------------------"
-    echo "2023-8-14   v1.2"
-    echo "1.新增了11选项，加入了常用面板工具合集！"
-    echo "-支持安装各种面板，包括: 宝塔，宝塔国际版，1panel，Nginx Proxy Manager等等，满足更多人群的使用需求！"
-    echo "2.优化了菜单效果"
-    echo "------------------------"
-    echo "2023-8-14   v1.3"
-    echo "新增了12选项，我的工作区功能"
-    echo "-将为你提供5个后台运行的工作区，用来执行后台任务。即使你断开SSH也不会中断，"
-    echo "-非常有意思的功能，快去试试吧！"
-    echo "------------------------"
-    echo "2023-8-14   v1.3.2"
-    echo "新增了13选项，系统工具"
-    echo "科技lion一键脚本可以通过设置快捷键唤醒打开了，我设置的k作为脚本打开的快捷键！无需复制长命令了"
-    echo "加入了ROOT密码修改，切换成ROOT登录模式"
-    echo "系统设置中还有很多功能没开发，敬请期待！"
-    echo "------------------------"
-    echo "2023-8-15   v1.4"
-    echo "全面适配Centos系统，实现Ubuntu，Debian，Centos三大主流系统的适配"
-    echo "优化LDNMP中PHP输入数据最大时间，解决WordPress网站导入部分主题失败的问题"
-    echo "------------------------"
-    echo "2023-8-15   v1.4.1"
-    echo "选项13，系统工具中，加入了安装Python最新版的选项，感谢群友春风得意马蹄疾的投稿！很好用！"
-    echo "------------------------"
-    echo "2023-8-15   v1.4.2"
-    echo "docker管理中增加容器日志查看"
-    echo "选项13，系统工具中，加入了留言板的选项，可以留下你的宝贵意见也可以在这里聊天，贼好玩！"
-    echo "------------------------"
-    echo "2023-8-15   v1.4.5"
-    echo "优化了信息查询运行效率"
-    echo "信息查询新增了地理位置显示"
-    echo "优化了脚本内系统判断机制！"
-    echo "------------------------"
-    echo "2023-8-16   v1.4.6"
-    echo "LDNMP建站中加入了删除站点删除数据库功能"
-    echo "------------------------"
-    echo "2023-8-16   v1.4.7"
-    echo "选项11中，增加了一键搭建alist多存储文件列表工具的"
-    echo "选项11中，增加了一键搭建网页版乌班图远程桌面"
-    echo "选项13中，增加了开放所有端口功能"
-    echo "------------------------"
-    echo "2023-8-16   v1.4.8"
-    echo "系统信息查询中，终于可以显示总流量消耗了！总接收和总发送两个信息"
-    echo "------------------------"
-    echo "2023-8-17   v1.4.9"
-    echo "系统工具中新增SSH端口修改功能"
-    echo "系统工具中新增优化DNS地址功能"
-    echo "------------------------"
-    echo "2023-8-18   v1.5"
-    echo "系统性优化了代码，去除了无效的代码与空格"
-    echo "系统信息查询添加了系统时间"
-    echo "禁用ROOT账户，创建新的账户，更安全！"
-    echo "------------------------"
-    echo "2023-8-18   v1.5.1"
-    echo "LDNMP加入了安装bingchatAI聊天网站"
-    echo "面板工具中添加了哪吒探针脚本整合"
-    echo "------------------------"
-    echo "2023-8-18   v1.5.2"
-    echo "LDNMP加入了更新LDNMP选项"
-    echo "------------------------"
-    echo "2023-8-19   v1.5.3"
-    echo "面板工具添加安装QB离线BT磁力下载面板"
-    echo "优化IP获取源"
-    echo "------------------------"
-    echo "2023-8-20   v1.5.4"
-    echo "面板工具已安装的工具支持状态检测，可以进行删除了！"
-    echo "------------------------"
-    echo "2023-8-21   v1.5.5"
-    echo "系统工具中添加优先ipv4/ipv6选项"
-    echo "系统工具中添加查看端口占用状态选项"
-    echo "------------------------"
-    echo "2023-8-21   v1.5.6"
-    echo "LDNMP建站添加了定时自动远程备份功能"
-    echo "------------------------"
-    echo "2023-8-22   v1.5.7"
-    echo "面板工具增加了邮件服务器搭建，请确保服务器的25.80.443开放"
-    echo "------------------------"
-    echo "2023-8-23   v1.5.8"
-    echo "面板工具增加了聊天系统搭建"
-    echo "------------------------"
-    echo "2023-8-24   v1.5.9"
-    echo "面板工具增加了禅道项目管理软件搭建"
-    echo "------------------------"
-    echo "2023-8-24   v1.6"
-    echo "面板工具增加了青龙面板搭建"
-    echo "调整了面板工具列表的排版显示效果"
-    echo "------------------------"
-    echo "2023-8-27   v1.6.1"
-    echo "LDNMP大幅优化安装体验，添加安装进度条和百分比显示，太刁了！"
-    echo "------------------------"
-    echo "2023-8-28   v1.6.2"
-    echo "docker管理可以显示容器所属网络，并且可以加入网络和退出网络了"
-    echo "------------------------"
-    echo "2023-8-28   v1.6.3"
-    echo "系统工具中增加修改虚拟内存大小的选项"
-    echo "系统信息查询中显示虚拟内存占用"
-    echo "------------------------"
-    echo "2023-8-29   v1.6.4"
-    echo "面板工具加入cloudreve网盘的搭建"
-    echo "面板工具加入简单图床程序搭建"
-    echo "------------------------"
-    echo "2023-8-29   v1.6.5"
-    echo "LDNMP加入了高逼格的flarum论坛搭建"
-    echo "面板工具加入简单图床程序搭建"
-    echo "------------------------"
-    echo "2023-9-1   v1.6.6"
-    echo "LDNMP环境安装时用户密码将随机生成，提升安全性，安装环境更简单！"
-    echo "LDNMP环境安装时如果安装过docker将自动跳过，节省安装时间"
-    echo "LDNMP环境更新WordPress到6.3.1版本"
-    echo "------------------------"
-    echo "2023-9-1   v1.6.7"
-    echo "添加了账户管理功能，查看当前账户列表，添加删除账户，账号权限管理等"
-    echo "------------------------"
-    echo "2023-9-4   v1.6.8"
-    echo "独角数卡登录时报错，显示解决办法"
-    echo "------------------------"
-    echo "2023-9-6   v1.6.9"
-    echo "系统工具中添加随机用户密码生成器，方便懒得想用户名和密码的小伙伴"
-    echo "优化了所有搭建网站与面板后的信息复制体验"
-    echo "------------------------"
-    echo "2023-9-11   v1.7"
-    echo "面板工具中添加emby多媒体管理系统的搭建"
-    echo "------------------------"
-    echo "2023-9-15   v1.7.1"
-    echo "LDNMP建站中可以搭建Bitwarden密码管理平台了"
-    echo "------------------------"
-    echo "2023-9-18   v1.7.2"
-    echo "LDNMP建站将站点信息查询和站点管理合并"
-    echo "LDNMP站点管理中添加证书重新申请和站点更换域名的功能"
-    echo "------------------------"
-    echo "2023-9-25   v1.8"
-    echo "LDNMP建站增加了服务器与网站防护功能，防御暴力破解，防御网站被攻击"
-    echo "------------------------"
-    echo "2023-9-28   v1.8.2"
-    echo "LDNMP建站优化了运行速度和安全性，增加了频率限制"
-    echo "LDNMP建站优化了防御程序的高可用性"
-    echo "------------------------"
-    echo "2023-10-3   v1.8.3"
-    echo "系统工具增加系统时区切换功能"
-    echo "------------------------"
-    echo "2023-10-7   v1.8.4"
-    echo "LDNMP建站添加halo博客网站搭建"
-    echo "------------------------"
-    echo "2023-10-12   v1.8.5"
-    echo "LDNMP建站添加优化LDNMP环境选项，可以开启高性能模式，大幅提升网站性能，应对高并发！"
-    echo "------------------------"
-    echo "2023-10-14   v1.8.6"
-    echo "面板工具增加了测速流量监控面板的安装"
-    echo "------------------------"
-    echo "2023-10-16   v1.8.7"
-    echo "系统工具中添加开启BBR3加速功能"
-    echo "------------------------"
-    echo "2023-10-18   v1.8.8"
-    echo "系统工具中优化BBR3加速安装流程，可根据CPU型号自行安装适合的内核版本"
-    echo "------------------------"
-    echo "2023-10-19   v1.8.9"
-    echo "系统工具中BBRv3功能增加了更新内核和卸载内核功能"
-    echo "------------------------"
-    echo "2023-10-21   v1.9"
-    echo "开放端口相关优化"
-    echo "解决部分系统SSH端口切换后重启失联的问题"
-    echo "------------------------"
-    echo "2023-10-26   v1.9.1"
-    echo "LNMP建站管理中添加了站点缓存清理功能"
-    echo "面板工具中卸载对应应用时添加了应用目录一并删除，删除更彻底！"
-    echo "------------------------"
-    echo "2023-10-28   v1.9.2"
-    echo "系统工具中修复了虚拟内存大小重启后还原的问题"
-    echo "------------------------"
-    echo "2023-11-07   v1.9.3"
-    echo "面板工具中增加AdGuardHome去广告软件安装和管理"
-    echo "------------------------"
-    echo "2023-11-08   v1.9.4"
-    echo "系统工具添加了防火墙高级管理功能，可以开关端口，可以IP黑白名单"
-    echo "未来会上线地域黑白名单等高级功能"
-    echo "------------------------"
-    echo "2023-11-09   v1.9.5"
-    echo "系统工具中防火墙添加udp控制"
-    echo "------------------------"
-    echo "2023-11-10   v1.9.6"
-    echo "测试脚本合集增加了缝合怪一条龙测试"
-    echo "系统信息查询中添加了系统运行时长显示"
-    echo "------------------------"
-    echo "2023-11-10   v1.9.7"
-    echo "LDNMP建站增加typecho轻量博客的搭建"
-    echo "------------------------"
-    echo "2023-11-16   v1.9.8"
-    echo "面板工具中增加了在线office办公软件安装"
-    echo "------------------------"
-    echo "2023-11-21   v1.9.9"
-    echo "面板工具中增加了雷池WAF防火墙程序安装"
-    echo "------------------------"
-
-
+    cd ~
+    curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/update_log.sh && chmod +x update_log.sh && ./update_log.sh
+    rm update_log.sh
+    echo ""
+    curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh && chmod +x kejilion.sh
+    echo "脚本已更新到最新版本！"
+    echo -e "\033[0;32m操作完成\033[0m"
+    echo "按任意键继续..."
+    read -n 1 -s -r -p ""
+    echo ""
+    ./kejilion.sh
+    exit
     ;;
 
   0)
