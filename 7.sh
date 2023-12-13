@@ -2,7 +2,7 @@
 #安装weget curl依赖包
 #yum update -y && yum install curl -y #CentOS/Fedora
 #apt-get update -y && apt-get install curl -y #Debian/Ubuntu
-#远程下载代码curl -sS -O https://raw.githubusercontent.com/Aovo7/Oneclick/main/7.sh && chmod +x 7.sh && ./7.sh
+#远程下载代码curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
 while true; do
 clear
 echo "------------------------"
@@ -33,7 +33,7 @@ read -p "请输入数字或指令: " choice
 
 case $choice in
 	renew)
-		curl -sS -O https://raw.githubusercontent.com/Aovo7/Oneclick/main/7.sh && chmod +x 7.sh
+		curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
   		;;
 	1) 
 		clear
