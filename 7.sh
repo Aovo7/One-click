@@ -33,7 +33,7 @@ read -p "请输入数字或指令: " choice
 
 case $choice in
 	renew)
-		curl -sS -O https://raw.githubusercontent.com/Aovo7/Oneclick/main/7.sh && chmod +x 7.sh && ./7.sh
+		curl -sS -O https://raw.githubusercontent.com/Aovo7/Oneclick/main/7.sh && chmod +x 7.sh
   		;;
 	1) 
 		clear
