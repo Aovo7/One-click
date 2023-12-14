@@ -104,6 +104,7 @@ case $choice in
 		while true; do
 			clear
 			echo "源于https://likeable-fuschia-f06.notion.site/VPS-76f1905f566942dabfa7f95317a0d2ca"
+			echo "若出现闪退 无法安装 请考虑更换新版本的操作系统 系统过低可能不支持"
 			echo "节点搭建："
 			echo "1.安装 Snell"
 			echo "2.安装 Shadowsocks"
