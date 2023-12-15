@@ -109,7 +109,7 @@ case $choice in
 			echo "1.安装 Snell"
 			echo "2.安装 Shadowsocks"
 			echo "3.安装 TUIC"
-			echo "4.安装 Hysteria"
+			echo "4.安装 Hy2"
 			echo "5.安装 SingBox"
 			echo "6.安装 Trojan"
 			echo "7.安装 V2Ray(VMESS/Trojan+WS/gRPC/TCP(+TLS)"
