@@ -113,6 +113,7 @@ case $choice in
 			echo "5.安装 SingBox"
 			echo "6.安装 Trojan"
 			echo "7.安装 V2Ray(VMESS/Trojan+WS/gRPC/TCP(+TLS)"
+			echo "6.安装 Trojan"
 			echo "0.返回主菜单"
 			read -p "请输入数字或指令:" sub_choice
 
@@ -138,6 +139,9 @@ case $choice in
 				7)
 					bash <(wget -qO- -o- https://git.io/v2ray.sh)
 					;;
+				hy2)
+					wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/hysteria-install/main/hy2/hysteria.sh && bash hysteria.sh
+	 			;;
 				0)
 					cd ~
 					./7.sh
