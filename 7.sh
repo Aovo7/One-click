@@ -133,7 +133,7 @@ case $choice in
 					wget -N -O /root/singbox.sh https://raw.githubusercontent.com/TinrLin/sing-box/main/Install.sh && chmod +x /root/singbox.sh && ln -sf /root/singbox.sh /usr/local/bin/singbox && bash /root/singbox.sh
 					;;
 				6)
-					curl -O https://raw.githubusercontent.com/atrandys/trojan/master/trojan_mult.sh && chmod +x trojan_mult.sh
+					source <(curl -L https://github.com/trojanpanel/install-script/raw/main/install_script.sh)
 					;;
 				7)
 					bash <(wget -qO- -o- https://git.io/v2ray.sh)
