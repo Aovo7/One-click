@@ -109,7 +109,7 @@ case $choice in
 			echo "1.安装 Snell"
 			echo "2.安装 Shadowsocks"
 			echo "3.安装 TUIC"
-			echo "4.安装 Hy2"
+			echo "4.安装 Reality Hy2 vmess+ws三合一"
 			echo "5.安装 SingBox"
 			echo "6.安装 Trojan"
 			echo "7.安装 V2Ray(VMESS/Trojan+WS/gRPC/TCP(+TLS)"
@@ -124,11 +124,11 @@ case $choice in
 					wget -O ss-rust.sh --no-check-certificate https://raw.githubusercontent.com/xOS/Shadowsocks-Rust/master/ss-rust.sh && chmod +x ss-rust.sh && ./ss-rust.sh
 					;;
 				3)
-					wget -N --no-check-certificate https://raw.githubusercontent.com/CCCOrz/auto-tuic/main/tuic.sh && bash tuic.sh
-					;;
+					bash <(curl -fsSL https://github.com/vveg26/sing-box-reality-hysteria2/raw/main/install.sh)
+			 	;;
 				4)
-					wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/hysteria-install/main/hy2/hysteria.sh && bash hysteria.sh
-					;;
+					bash <(curl -fsSL https://github.com/vveg26/sing-box-reality-hysteria2/raw/main/beta.sh)
+				 ;;
 				5)
 					wget -N -O /root/singbox.sh https://raw.githubusercontent.com/TinrLin/sing-box/main/Install.sh && chmod +x /root/singbox.sh && ln -sf /root/singbox.sh /usr/local/bin/singbox && bash /root/singbox.sh
 					;;
