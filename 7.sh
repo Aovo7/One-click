@@ -150,9 +150,13 @@ case $choice in
 				*)
 					echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
 					;;
-			esac
-		done
-		;;
+						  esac
+						  echo -e "\033[0;32m操作完成\033[0m"
+						  echo "按任意键继续..."
+						  read -n 1 -s -r -p ""
+						  echo ""
+					  done
+					;;
 
  	4)
 		while true; do
