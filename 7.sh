@@ -16,7 +16,7 @@ echo -e "\033[0;32mOne-click by 7\033[0m"
 echo "脚本目录"
 echo "1.系统信息"
 echo "2.系统更新"
-echo "3.节点搭建"
+
 echo "4.网站搭建"
 echo "8.融合怪测试"
 echo "9.三网回程检测"
@@ -100,63 +100,6 @@ case $choice in
 			echo "未知的系统类型，无法更新"
 		fi
 		;;
-	3)
-		while true; do
-			clear
-			echo "源于https://likeable-fuschia-f06.notion.site/VPS-76f1905f566942dabfa7f95317a0d2ca"
-			echo -e "\033[32m节点搭建菜单\033[0m"
-			echo "节点搭建："
-			echo "1.安装 Snell"
-			echo "2.安装 Shadowsocks"
-			echo "3.安装 TUIC"
-			echo "4.安装 Reality Hy2 vmess+ws三合一"
-			echo "5.安装 SingBox"
-			echo "6.安装 Trojan"
-			echo "7.安装 V2Ray(VMESS/Trojan+WS/gRPC/TCP(+TLS)"
-			echo "6.安装 Trojan"
-			echo "0.返回主菜单"
-			read -p "请输入数字或指令:" sub_choice
-
-			case $sub_choice in
-				1)
-					wget -O snell.sh --no-check-certificate https://git.io/Snell.sh && chmod +x snell.sh && ./snell.sh
-					;;
-				2)
-					wget -O ss-rust.sh --no-check-certificate https://raw.githubusercontent.com/xOS/Shadowsocks-Rust/master/ss-rust.sh && chmod +x ss-rust.sh && ./ss-rust.sh
-					;;
-				3)
-					bash <(curl -fsSL https://github.com/vveg26/sing-box-reality-hysteria2/raw/main/install.sh)
-			 	;;
-				4)
-					bash <(curl -fsSL https://github.com/vveg26/sing-box-reality-hysteria2/raw/main/beta.sh)
-				 ;;
-				5)
-					wget -N -O /root/singbox.sh https://raw.githubusercontent.com/TinrLin/sing-box/main/Install.sh && chmod +x /root/singbox.sh && ln -sf /root/singbox.sh /usr/local/bin/singbox && bash /root/singbox.sh
-					;;
-				6)
-					source <(curl -L https://github.com/trojanpanel/install-script/raw/main/install_script.sh)
-					;;
-				7)
-					bash <(wget -qO- -o- https://git.io/v2ray.sh)
-					;;
-				hy2)
-					wget -N --no-check-certificate https://raw.githubusercontent.com/Misaka-blog/hysteria-install/main/hy2/hysteria.sh && bash hysteria.sh
-	 			;;
-				0)
-					cd ~
-					./7.sh
-					exit
-					;;
-				*)
-					echo "0.0此地无银三百两 请输入正确的数字或指令哦~"
-					;;
-						  esac
-						  echo -e "\033[0;32m操作完成\033[0m"
-						  echo "按任意键继续..."
-						  read -n 1 -s -r -p ""
-						  echo ""
-					  done
-					;;
 
  	4)
 		while true; do
@@ -1577,135 +1520,7 @@ case $choice in
 		;;
 	10) 
 		bash <(curl -Lso- https://down.wangchao.info/sh/superspeed.sh)
-
-	24)
-		docker_name="PandoraNext"
-		docker_img="pengzhile/pandora-next"
-		docker_port=2333
-		docker_rum="docker run -d --restart always --name PandoraNext \
-						-p 2333:2333 \
-						-v /home/docker/PandoraNext/data:/data \
-						-v /home/docker/PandoraNext/sessions:/root/.cache/PandoraNext \
-						pengzhile/pandora-next"
-		docker_describe="pandora-next一个好用的GPT镜像站服务，国内也可以访问"
-		docker_url="官网介绍: https://github.com/pandora-next/deploy"
-
-		if docker inspect "$docker_name" &>/dev/null; then
-			clear
-			echo "$docker_name 已安装，访问地址: "
-			external_ip=$(curl -s ipv4.ip.sb)
-			echo "http:$external_ip:$docker_port"
-			echo ""
-			echo "应用操作"
-			echo "------------------------"
-			echo "1. 更新应用             2. 卸载应用"
-			echo "3. 修改config           4. 修改tokens"                
-			echo "------------------------"
-			echo "0. 返回上一级选单"
-			echo "------------------------"
-			read -p "请输入你的选择: " sub_choice
-
-			case $sub_choice in
-				1)
-					clear
-					docker rm -f "$docker_name"
-					docker rmi -f "$docker_img"
-					# 安装 Docker（请确保有 install_docker 函数）
-					install_docker
-					$docker_rum
-					clear
-					echo "$docker_name 已经安装完成"
-					echo "------------------------"
-					# 获取外部 IP 地址
-					external_ip=$(curl -s ipv4.ip.sb)
-					echo "您可以使用以下地址访问:"
-					echo "http:$external_ip:$docker_port"
-					;;
-				2)
-					clear
-					docker rm -f "$docker_name"
-					docker rmi -f "$docker_img"
-					rm -rf "/home/docker/$docker_name"
-					echo "应用已卸载"
-					;;
-				3)
-					clear
-					nano /home/docker/PandoraNext/data/config.json
-					echo "正在重启$docker_name"
-					docker restart "$docker_name"
-					;;
-				4)
-					clear
-					nano /home/docker/PandoraNext/data/tokens.json
-					echo "正在重启$docker_name"
-					docker restart "$docker_name"
-					;;                                                
-				0)
-					# 跳出循环，退出菜单
-					;;
-				*)
-					# 跳出循环，退出菜单
-					;;
-			esac
-		else
-			clear
-			echo "安装提示"
-			echo "$docker_describe"
-			echo "$docker_url"
-			echo ""
-
-			# 提示用户确认安装
-			read -p "确定安装吗？(Y/N): " choice
-			case "$choice" in
-				[Yy])
-					clear
-					echo "获取license_id请访问: https://dash.pandoranext.com/"
-					read -p "请输入你的GitHub的license_id: " github1
-
-					install_docker
-
-					mkdir -p /home/docker/PandoraNext/{data,sessions}
-					cd /home/docker/PandoraNext/data
-					wget https://raw.githubusercontent.com/Aovo7/One-click/main/PandoraNext/config.json
-					wget https://raw.githubusercontent.com/Aovo7/One-click/main/PandoraNext/tokens.json
-					sed -i "s/github/$github1/g" /home/docker/PandoraNext/data/config.json
-					webgptpasswd1=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
-					sed -i "s/webgptpasswd/$webgptpasswd1/g" /home/docker/PandoraNext/data/config.json
-
-					$docker_rum
-					clear
-					echo "$docker_name 已经安装完成"
-					echo "------------------------"
-					# 获取外部 IP 地址
-					external_ip=$(curl -s ipv4.ip.sb)
-					echo "您可以使用以下地址访问:"
-					echo "http:$external_ip:$docker_port"
-					;;
-				[Nn])
-					# 用户选择不安装
-					;;
-				*)
-					# 无效输入
-					;;
-			esac
-		fi
 		;;
-
-	0)
-		cd ~
-		./7.sh
-		exit
-		;;
-
-	*)
-		echo "无效的输入!"
-		;;
-	esac
-	break_end
-
-	done
-	;;
-
 	0) 
 		clear
 		exit 0 && exit 0 && exit 0 && exit 0 && exit 0 && exit 0
