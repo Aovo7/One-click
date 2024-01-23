@@ -49,7 +49,7 @@ install_certbot() {
     cd ~ || exit
 
     # 下载并使脚本可执行
-    curl -O https://raw.githubusercontent.com/kejilion/sh/main/auto_cert_renewal.sh
+    curl -O https://raw.githubusercontent.com/Aovo7/One-click/main/auto_cert_renewal.sh
     chmod +x auto_cert_renewal.sh
 
     # 设置定时任务字符串
@@ -198,12 +198,12 @@ install_ldnmp() {
       # 创建必要的目录和文件
       cd /home && mkdir -p web/html web/mysql web/certs web/conf.d web/redis web/log/nginx && touch web/docker-compose.yml
 
-      wget -O /home/web/nginx.conf https://raw.githubusercontent.com/kejilion/nginx/main/nginx10.conf
-      wget -O /home/web/conf.d/default.conf https://raw.githubusercontent.com/kejilion/nginx/main/default10.conf
+      wget -O /home/web/nginx.conf https://raw.githubusercontent.com/Aovo7/One-click/main/nginx10.conf
+      wget -O /home/web/conf.d/default.conf https://raw.githubusercontent.com/Aovo7/One-click/main/default10.conf
       default_server_ssl
 
       # 下载 docker-compose.yml 文件并进行替换
-      wget -O /home/web/docker-compose.yml https://raw.githubusercontent.com/kejilion/docker/main/LNMP-docker-compose-10.yml
+      wget -O /home/web/docker-compose.yml https://raw.githubusercontent.com/Aovo7/One-click/main/LNMP-docker-compose-10.yml
 
       dbrootpasswd=$(openssl rand -base64 16) && dbuse=$(openssl rand -hex 4) && dbusepasswd=$(openssl rand -base64 8)
 
