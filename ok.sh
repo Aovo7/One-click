@@ -220,3 +220,6 @@ install_ldnmp() {
       ./7.sh
       exit
       ;;
+esac
+    break_end
+done
