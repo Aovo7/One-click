@@ -77,7 +77,7 @@ break_end() {
 }
 
 kejilion() {
-            k
+            e
             exit
 }
 
@@ -5504,19 +5504,11 @@ EOF
 
     ;;
 
-  p)
-    cd ~
-    curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/palworld.sh && chmod +x palworld.sh && ./palworld.sh
-    exit
-    ;;
+
 
 
   00)
-    cd ~
-    curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/update_log.sh && chmod +x update_log.sh && ./update_log.sh
-    rm update_log.sh
-    echo ""
-    curl -sS -O https://raw.githubusercontent.com/kejilion/sh/main/kejilion.sh && chmod +x kejilion.sh
+    curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/eco.sh && chmod +x eco.sh
     echo "脚本已更新到最新版本！"
     break_end
     kejilion
