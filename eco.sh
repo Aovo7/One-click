@@ -2,7 +2,7 @@
 #安装weget curl依赖包
 #yum update -y && yum install curl -y #CentOS/Fedora
 #apt-get update -y && apt-get install curl -y #Debian/Ubuntu
-#远程下载代码curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && chmod +x 7.sh && ./7.sh
+#远程下载代码curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/eco.sh && chmod +x eco.sh && ./eco.sh
 #!/bin/bash
 ln -sf ~/kejilion.sh /usr/local/bin/k
 
