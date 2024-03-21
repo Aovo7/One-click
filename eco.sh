@@ -2089,8 +2089,8 @@ EOF
 
                         ;;
                     2)
-                        echo "将证书与密钥放在/home/web/conf.d/$oddyuming.conf /home/web/conf.d/网站名.conf"
-                        echo "文件名分别为：域名_cert.pem与域名_key.pem"
+                        echo "请在操作前先将证书与密钥放在/home/web/certs/新域名_key.pem与/home/web/certs/新域名_cert.pem"
+                        echo "文件名分别为：新域名_cert.pem与新域名_key.pem"
                         read -p "请输入旧域名: " oddyuming
                         read -p "请输入新域名: " yuming
                         mv /home/web/conf.d/$oddyuming.conf /home/web/conf.d/$yuming.conf
