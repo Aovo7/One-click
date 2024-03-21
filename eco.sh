@@ -478,25 +478,6 @@ tmux_run() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 while true; do
 clear
 
@@ -518,6 +499,9 @@ echo "11. 面板工具 ▶ "
 echo "12. 我的工作区 ▶ "
 echo "13. 系统工具 ▶ "
 echo "14. VPS集群控制 ▶ "
+echo "------------------------"
+echo "p. 幻兽帕鲁开服脚本 ▶"
+echo "------------------------"
 echo "00. 脚本更新"
 echo "------------------------"
 echo "0. 退出脚本"
@@ -2158,7 +2142,7 @@ EOF
 
       while true; do
         clear
-        read -p "要传送文件到远程服务器吗？(Y/N): " choice
+        read -p "要传送文件到远程服务器吗？(Y/N)默认N: " choice
         case "$choice" in
           [Yy])
             read -p "请输入远端服务器IP:  " remote_ip
@@ -2181,7 +2165,7 @@ EOF
             break
             ;;
           *)
-            echo "无效的选择，请输入 Y 或 N。"
+            break
             ;;
         esac
       done
