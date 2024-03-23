@@ -1927,47 +1927,105 @@ EOF
         ;;
 
       22)
-      clear
-      ip_address
-      add_yuming
-      read -p "请输入跳转域名: " reverseproxy
+        echo "------------------------"
+        echo "1. 自动申请证书                 2. 自备证书"
+        read -p "请输入你的选择: " sub_choice  
+        case $sub_choice in
+            1)    
+                clear
+                ip_address
+                add_yuming
+                read -p "请输入跳转域名: " reverseproxy
 
-      install_ssltls
+                install_ssltls
 
-      wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/rewrite.conf
-      sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
-      sed -i "s/baidu.com/$reverseproxy/g" /home/web/conf.d/$yuming.conf
+                wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/rewrite.conf
+                sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
+                sed -i "s/baidu.com/$reverseproxy/g" /home/web/conf.d/$yuming.conf
 
-      docker restart nginx
+                docker restart nginx
 
-      clear
-      echo "您的重定向网站做好了！"
-      echo "https://$yuming"
-      nginx_status
+                clear
+                echo "您的重定向网站做好了！"
+                echo "https://$yuming"
+                nginx_status
 
+                ;;
+             2)   
+                clear
+                echo "请在操作前先将证书与密钥放在/home/web/certs/新域名_key.pem与/home/web/certs/新域名_cert.pem"
+                echo "文件名分别为：新域名_cert.pem与新域名_key.pem"
+                ip_address
+                add_yuming
+                read -p "请输入跳转域名: " reverseproxy
+
+
+                wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/rewrite.conf
+                sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
+                sed -i "s/baidu.com/$reverseproxy/g" /home/web/conf.d/$yuming.conf
+
+                docker restart nginx
+
+                clear
+                echo "您的重定向网站做好了！"
+                echo "https://$yuming"
+                nginx_status
+
+                ;;             
+        esac
         ;;
-
       23)
-      clear
-      ip_address
-      add_yuming
-      read -p "请输入你的反代IP: " reverseproxy
-      read -p "请输入你的反代端口: " port
+        echo "------------------------"
+        echo "1. 自动申请证书                 2. 自备证书"
+        read -p "请输入你的选择: " sub_choice  
+        case $sub_choice in
+            1)    
+                clear
+                ip_address
+                add_yuming
+                read -p "请输入你的反代IP: " reverseproxy
+                read -p "请输入你的反代端口: " port
 
-      install_ssltls
+                install_ssltls
 
-      wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/reverse-proxy.conf
-      sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
-      sed -i "s/0.0.0.0/$reverseproxy/g" /home/web/conf.d/$yuming.conf
-      sed -i "s/0000/$port/g" /home/web/conf.d/$yuming.conf
+                wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/reverse-proxy.conf
+                sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
+                sed -i "s/0.0.0.0/$reverseproxy/g" /home/web/conf.d/$yuming.conf
+                sed -i "s/0000/$port/g" /home/web/conf.d/$yuming.conf
 
-      docker restart nginx
+                docker restart nginx
 
-      clear
-      echo "您的反向代理网站做好了！"
-      echo "https://$yuming"
-      nginx_status
-        ;;
+                clear
+                echo "您的反向代理网站做好了！"
+                echo "https://$yuming"
+                nginx_status
+                ;;
+             2)   
+                clear
+                echo "请在操作前先将证书与密钥放在/home/web/certs/新域名_key.pem与/home/web/certs/新域名_cert.pem"
+                echo "文件名分别为：新域名_cert.pem与新域名_key.pem"                
+                ip_address
+                add_yuming
+                read -p "请输入你的反代IP: " reverseproxy
+                read -p "请输入你的反代端口: " port
+                
+
+                wget -O /home/web/conf.d/$yuming.conf https://raw.githubusercontent.com/kejilion/nginx/main/reverse-proxy.conf
+                sed -i "s/yuming.com/$yuming/g" /home/web/conf.d/$yuming.conf
+                sed -i "s/0.0.0.0/$reverseproxy/g" /home/web/conf.d/$yuming.conf
+                sed -i "s/0000/$port/g" /home/web/conf.d/$yuming.conf
+
+                docker restart nginx
+
+                clear
+                echo "您的反向代理网站做好了！"
+                echo "https://$yuming"
+                nginx_status
+                ;;       
+        esac
+        ;;        
+
+
 
       24)
       clear
