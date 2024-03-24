@@ -2222,9 +2222,11 @@ EOF
             break
             ;;
           [Nn])
+            docker start $(docker ps -aq)
             break
             ;;
           *)
+            docker start $(docker ps -aq)
             break
             ;;
         esac
@@ -2273,7 +2275,7 @@ EOF
       install_docker
       install_certbot
       install_ldnmp
-
+      docker restart $(docker ps -aq)
       ;;
 
     35)
