@@ -2227,8 +2227,8 @@ EOF
             break
             ;;
         esac
-        docker start $(docker ps -aq)
       done
+      docker start $(docker ps -aq)
       ;;
 
     33)
