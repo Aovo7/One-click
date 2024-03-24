@@ -2218,18 +2218,16 @@ EOF
             else
               echo "未找到要传送的文件。"
             fi
-            docker start $(docker ps -aq)
             break
             ;;
           [Nn])
-            docker start $(docker ps -aq)
             break
             ;;
           *)
-            docker start $(docker ps -aq)
             break
             ;;
         esac
+        docker start $(docker ps -aq)
       done
       ;;
 
