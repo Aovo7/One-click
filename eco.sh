@@ -2196,6 +2196,7 @@ EOF
 
     32)
       clear
+      docker stop $(docker ps -q)
       cd /home/ && tar czvf web_$(date +"%Y%m%d%H%M%S").tar.gz web
 
       while true; do
@@ -2217,6 +2218,7 @@ EOF
             else
               echo "未找到要传送的文件。"
             fi
+            docker start $(docker ps -aq)
             break
             ;;
           [Nn])
