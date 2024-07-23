@@ -20,6 +20,7 @@ while true; do
     echo "9.singbox                         "
     echo " "
     echo "0.退出脚本         00.更新脚本"
+    echo "rm.删除脚本"
     read -p "等待输入" choice
     case $choice in
         1)   
@@ -88,6 +89,10 @@ while true; do
             ;;
         00)
             renew
+            ;;
+        rm)
+            rm ~/7.sh
+            rm /usr/local/bin/7
             ;;
         *)
             echo "无效输入"
