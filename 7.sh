@@ -16,7 +16,8 @@ while true; do
     echo "1.重装系统                2.流媒体检测 "
     echo "3.添加warp v4出站          "
     echo "5.XUI                    6.3-XUI "
-    echo "7.ss                     8.singbox      "
+    echo "7.ss                     8.snell      "
+    echo "9.singbox                         "
     echo " "
     echo "0.退出脚本         00.更新脚本"
     read -p "等待输入" choice
@@ -59,6 +60,9 @@ while true; do
             wget -O ss-rust.sh --no-check-certificate https://raw.githubusercontent.com/xOS/Shadowsocks-Rust/master/ss-rust.sh && chmod +x ss-rust.sh && ./ss-rust.sh
             ;;
         8)
+            wget -O snell.sh --no-check-certificate https://git.io/Snell.sh && chmod +x snell.sh && ./snell.sh
+            ;; 
+        9)
             clear
             echo "https://233boy.com/sing-box/sing-box-script/ "
             echo "     "
