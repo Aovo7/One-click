@@ -7,6 +7,13 @@ renew(){
     curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && sudo chmod +x 7.sh && ./7.sh
 }
 
+remove_script() {
+    echo "正在删除脚本文件和符号链接..."
+    rm -f ~/7.sh
+    sudo rm -f /usr/local/bin/7
+    echo "删除完成。"
+}
+
 menu() {
     7
 }
@@ -91,8 +98,7 @@ while true; do
             renew
             ;;
         rm)
-            rm ~/7.sh
-            rm /usr/local/bin/7
+            remove_script
             ;;
         *)
             echo "无效输入"
