@@ -1,8 +1,5 @@
 #!/bin/bash
-#安装wget curl依赖包
-#yum update -y && yum install curl -y #CentOS/Fedora
-#apt-get update -y && apt-get install curl -y #Debian/Ubuntu
-#远程下载代码curl -sS -O https://raw.githubusercontent.com/ecouus/Shell/main/ecouu.sh && sudo chmod +x ecouu.sh && ./ecouu.sh
+#curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && sudo chmod +x 7.sh && ./7.sh
 ln -sf ~/7.sh /usr/local/bin/7
 
 install_docker() {
@@ -24,7 +21,7 @@ install_docker() {
 }
 
 renew(){
-    curl -sS -O https://raw.githubusercontent.com/ecouus/Shell/main/ecouu.sh && sudo chmod +x ecouu.sh && ./ecouu.sh
+    curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && sudo chmod +x 7.sh && ./7.sh
 }
 
 menu() {
