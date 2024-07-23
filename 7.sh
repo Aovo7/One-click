@@ -2,23 +2,6 @@
 #curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && sudo chmod +x 7.sh && ./7.sh
 ln -sf ~/7.sh /usr/local/bin/7
 
-install_docker() {
-    if ! command -v docker &>/dev/null; then
-        if [ -f "/etc/alpine-release" ]; then
-            apk update && apk add docker docker-compose
-            rc-update add docker default && service docker start
-        else
-            curl -fsSL https://get.docker.com | sh
-            if ! command -v docker-compose &>/dev/null; then
-                curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-                chmod +x /usr/local/bin/docker-compose
-            fi
-            systemctl start docker && systemctl enable docker
-        fi
-    else
-        echo "Docker 已经安装."
-    fi
-}
 
 renew(){
     curl -sS -O https://raw.githubusercontent.com/Aovo7/One-click/main/7.sh && sudo chmod +x 7.sh && ./7.sh
@@ -29,12 +12,11 @@ menu() {
 }
 
 while true; do
-    clear
     echo -e "\e[38;5;214mMenu:\e[0m"
-    echo "1.重装系统               2.流媒体检测 "
+    echo "1.重装系统                2.流媒体检测 "
     echo "3.添加warp v4出站          "
-    echo "5.XUI                   6.3-XUI "
-    echo "7.ss                    8.singbox      "
+    echo "5.XUI                    6.3-XUI "
+    echo "7.ss                     8.singbox      "
     echo " "
     echo "0.退出脚本         00.更新脚本"
     read -p "等待输入" choice
