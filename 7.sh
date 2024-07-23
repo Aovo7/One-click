@@ -30,12 +30,13 @@ menu() {
 
 while true; do
     clear
+    echo -e "\e[38;5;214mMenu:\e[0m"
     echo "1.重装系统               2.流媒体检测 "
     echo "3.添加warp v4出站          "
     echo "5.XUI                   6.3-XUI "
     echo "7.ss                    8.singbox      "
     echo " "
-    echo "0.退出脚本         88.更新脚本"
+    echo "0.退出脚本         00.更新脚本"
     read -p "等待输入" choice
     case $choice in
         1)   
@@ -99,7 +100,7 @@ while true; do
             clear
             exit
             ;;
-        88)
+        00)
             renew
             ;;
         *)
