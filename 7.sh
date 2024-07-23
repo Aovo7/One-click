@@ -99,6 +99,7 @@ while true; do
             ;;
         rm)
             remove_script
+            exit
             ;;
         *)
             echo "无效输入"
