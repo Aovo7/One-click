@@ -53,7 +53,7 @@ while true; do
             esac
             ;;
         2)   
-            bash <(curl -Ls IP.Check.Place)
+            bash <(curl -L -s https://netflix.dad/detect-script)
             ;;
         3)  
             wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh 4
