@@ -53,7 +53,7 @@ while true; do
             esac
             ;;
         2)   
-            bash <(curl -sL IP.Check.Place)
+            bash <(curl -L -s media.ispvps.com)
             ;;
         3)  
             wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh 4
