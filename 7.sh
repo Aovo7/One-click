@@ -175,8 +175,11 @@ while true; do
                             echo "子存储项目已安装"
                         else
                             # 提示用户输入路径和端口
-                            read -p "请输入加密路径 (例如 abc): " user_path
-                            read -p "请输入端口号 (例如 3001): " user_port
+                            read -p "请输入加密路径 (默认: abc): " user_path
+                            user_path=${user_path:-abc}  # 如果用户未输入，则使用默认值 "abc"
+
+                            read -p "请输入端口号 (默认: 3001): " user_port
+                            user_port=${user_port:-3001}  # 如果用户未输入，则使用默认值 "3001"
 
 
                             # 初始化端口占用信息变量
