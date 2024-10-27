@@ -41,7 +41,7 @@ check_ports() {
 
 iptables_open() {
     # 允许指定端口的流量通过
-    ports="$port"
+    ports="$user_port"
     iptables -A INPUT -p tcp --dport "$ports" -j ACCEPT
     iptables -A OUTPUT -p tcp --sport "$ports" -j ACCEPT
 }
@@ -194,8 +194,9 @@ while true; do
                                 -e SUB_STORE_FRONTEND_BACKEND_PATH=/$user_path \
                                 -p $user_port:3001 \
                                 -v /root/sub-store-data:/opt/app/data \
-                                --name $name xream/sub-store
-
+                                --name $name \
+                                xream/sub-store
+                            check_ip_address
                             echo "Sub-Store 容器已启动，路径为 $user_path，端口为 $user_port"
                             echo "http://$ip_address:$user_port?api=http://$ip_address:$user_port/$user_path"
                             
