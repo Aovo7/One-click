@@ -114,7 +114,7 @@ while true; do
             esac
             ;;
         2)   
-            bash <(curl -L -s media.ispvps.com)
+            bash <(curl -L -s https://raw.githubusercontent.com/1-stream/RegionRestrictionCheck/main/check.sh)
             ;;
         3)  
             wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh 4
