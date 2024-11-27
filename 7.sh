@@ -81,8 +81,8 @@ menu() {
 
 while true; do
     echo -e "\e[38;5;214mMenu:\e[0m"
-    echo "1.重装系统                2.流媒体检测 "
-    echo "3.添加warp v4出站          "
+    echo "1.重装系统                2.1stream流媒体检测 "
+    echo "3.添加warp v4出站         4.IPCheck  "
     echo "5.XUI                    6.3-XUI "
     echo "7.ss                     8.snell      "
     echo "9.singbox                10.sub-store "
@@ -119,8 +119,11 @@ while true; do
         3)  
             wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh 4
             ;;
+        4)  
+            bash <(curl -sL IP.Check.Place)  
+            ;;
         5)  
-            bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+            bash <(curl -L -s https://github.com/1-stream/RegionRestrictionCheck/raw/main/check.sh)
             ;;
         6)  
             bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
