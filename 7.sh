@@ -86,6 +86,7 @@ while true; do
     echo "5.XUI                    6.3-XUI "
     echo "7.ss                     8.snell      "
     echo "9.singbox                10.sub-store "
+    echo "11.vasma八合一                "
     echo " "
     echo "0.退出脚本         00.更新脚本"
     echo "rm.删除脚本"
@@ -250,6 +251,9 @@ while true; do
                 esac
             done
             ;;
+        11)
+            wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
+            ;; 
         0)
             clear
             exit
