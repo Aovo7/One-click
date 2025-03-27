@@ -80,17 +80,39 @@ menu() {
 }
 
 while true; do
-    echo -e "\e[38;5;214mMenu:\e[0m"
-    echo "1.重装系统                2.1stream流媒体检测 "
-    echo "3.添加warp v4出站         4.IPCheck  "
-    echo "5.XUI                    6.3-XUI "
-    echo "7.ss                     8.snell      "
-    echo "9.singbox                10.sub-store "
-    echo "11.vasma八合一            12.ss2022/snell+shadowtls    "
-    echo " "
-    echo "0.退出脚本         00.更新脚本"
-    echo "rm.删除脚本"
-    read -p "等待输入" choice
+    clear
+    # 定义颜色
+    GREEN="\033[0;32m"
+    BLUE="\033[0;34m"
+    YELLOW="\033[0;33m"
+    CYAN="\033[0;36m"
+    RED="\033[0;31m"
+    PURPLE="\033[0;35m"
+    NC="\033[0m" # 恢复默认颜色
+    
+    # 绘制边框和标题
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${YELLOW}                 功能菜单                   ${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    
+    # 菜单选项
+    echo -e "${GREEN}【系统工具】${NC}"
+    echo -e " ${BLUE}1.${NC} 重装系统               ${BLUE}2.${NC} 流媒体检测"
+    echo -e " ${BLUE}3.${NC} 添加warp v4出站        ${BLUE}4.${NC} IPCheck"
+    
+    echo -e "${GREEN}【代理工具】${NC}"
+    echo -e " ${BLUE}5.${NC} XUI                   ${BLUE}6.${NC} 3-XUI"
+    echo -e " ${BLUE}7.${NC} ss                    ${BLUE}8.${NC} snell"
+    echo -e " ${BLUE}9.${NC} singbox               ${BLUE}10.${NC} sub-store"
+    echo -e " ${BLUE}11.${NC} vasma八合一           ${BLUE}12.${NC} ss2022/snell+shadowtls"
+    
+    echo -e "${GREEN}【其他选项】${NC}"
+    echo -e " ${RED}0.${NC} 退出脚本               ${RED}00.${NC} 更新脚本"
+    echo -e " ${PURPLE}rm.${NC} 删除脚本"
+    
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    read -p " 请输入选项 > " choice
+    
     case $choice in
         1)   
             clear
