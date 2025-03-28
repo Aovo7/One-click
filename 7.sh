@@ -79,225 +79,217 @@ menu() {
     7
 }
 
-while true; do
-    clear
-    # 定义颜色
-    GREEN="\033[0;32m"
-    BLUE="\033[0;34m"
-    YELLOW="\033[0;33m"
-    CYAN="\033[0;36m"
-    RED="\033[0;31m"
-    PURPLE="\033[0;35m"
-    NC="\033[0m" # 恢复默认颜色
-    
-    # 绘制边框和标题
-    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    echo -e "${YELLOW}                 功能菜单                   ${NC}"
-    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    
-    # 菜单选项
-    echo -e "${GREEN}【系统工具】${NC}"
-    echo -e " ${BLUE}1.${NC} 重装系统               ${BLUE}2.${NC} 流媒体检测"
-    echo -e " ${BLUE}3.${NC} 添加warp v4出站        ${BLUE}4.${NC} IPCheck"
-    
-    echo -e "${GREEN}【代理工具】${NC}"
-    echo -e " ${BLUE}5.${NC} XUI                   ${BLUE}6.${NC} 3-XUI"
-    echo -e " ${BLUE}7.${NC} ss                    ${BLUE}8.${NC} snell"
-    echo -e " ${BLUE}9.${NC} singbox               ${BLUE}10.${NC} sub-store"
-    echo -e " ${BLUE}11.${NC} vasma八合一           ${BLUE}12.${NC} ss2022/snell+shadowtls"
-    echo -e " ${BLUE}13.${NC} ShadowtlsV3                "
-    
-    echo -e "${GREEN}【其他选项】${NC}"
-    echo -e " ${RED}0.${NC} 退出脚本               ${RED}00.${NC} 更新脚本"
-    echo -e " ${PURPLE}rm.${NC} 删除脚本"
-    
-    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-    read -p " 请输入选项 > " choice
-    
-    case $choice in
-        1)   
-            clear
-            
-            echo "https://github.com/bin456789/reinstall"
-            echo "     "
-            echo "安装后运行以下指令即为重装为debian11"
-            echo "bash reinstall.sh debian 11 "
-            echo "Linux重装后	用户名:root	 密码:123@@@"
-            echo "1:安装   2:退出"
-            read -p " " inner_choice
-            case $inner_choice in
-                1)   
-                    curl -O https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh
-                    ;;
-                2)   
-                    menu
-                    ;;
-                *)
-                    echo "无效输入"
-                    ;;
-            esac
-            ;;
-        2)   
-            bash <(curl -L -s https://raw.githubusercontent.com/1-stream/RegionRestrictionCheck/main/check.sh)
-            ;;
-        3)  
-            wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh 4
-            ;;
-        4)  
-            bash <(curl -sL IP.Check.Place)  
-            ;;
-        5)  
-            bash <(curl -L -s https://github.com/1-stream/RegionRestrictionCheck/raw/main/check.sh)
-            ;;
-        6)  
-            bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
-            ;;
-        7)
-            wget -O ss-rust.sh --no-check-certificate https://raw.githubusercontent.com/xOS/Shadowsocks-Rust/master/ss-rust.sh && chmod +x ss-rust.sh && ./ss-rust.sh
-            ;;
-        8)
-            wget -O snell.sh --no-check-certificate https://git.io/Snell.sh && chmod +x snell.sh && ./snell.sh
-            ;; 
-        9)
-            clear
-            echo "https://233boy.com/sing-box/sing-box-script/ "
-            echo "     "
-            echo "sb add ss -> 添加一个 Shadowsocks 2022 配置"
-            echo "sb add reality -> 添加一个 VLESS-REALITY 配置"
-            echo "1:安装   2:退出"
-            read -p " " inner_choice
-            case $inner_choice in
-                1)   
-                    bash <(wget -qO- -o- https://github.com/233boy/sing-box/raw/main/install.sh)
-                    ;;
-                2)   
-                    menu
-                    ;;
-                *)
-                    echo "无效输入"
-                    ;;
-            esac
-            ;;
-        10)
-            while true; do
-                clear
-                echo -e "\033[38;5;208m'子存储项目Sub-Store' \033[0m"
-                echo "------------------------"
-                echo "菜单栏："
-                echo "------------------------"
-                echo "1. 安装项目"
-                echo "2. 删除项目"
-                echo "0. 返回主菜单"
-                read -p "请输入你的选择：" user_choice
-                name="sub-store"
+# 修改为不使用无限循环
+clear
+# 定义颜色
+GREEN="\033[0;32m"
+BLUE="\033[0;34m"
+YELLOW="\033[0;33m"
+CYAN="\033[0;36m"
+RED="\033[0;31m"
+PURPLE="\033[0;35m"
+NC="\033[0m" # 恢复默认颜色
 
-                case $user_choice in
-                    1)
-                        install_docker
-                        iptables_open
+# 绘制边框和标题
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}                 功能菜单                   ${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 
-                        # 检查名为sub-store的容器是否已存在
-                        container_exists=$(docker ps -a --format '{{.Names}}' | grep -w "$name")
-                        if [ "$container_exists" = "$name" ]; then
-                            echo "子存储项目已安装"
-                        else
-                            # 提示用户输入路径和端口
-                            read -p "请输入加密路径 (默认: abc): " user_path
-                            user_path=${user_path:-abc}  # 如果用户未输入，则使用默认值 "abc"
+# 菜单选项
+echo -e "${GREEN}【系统工具】${NC}"
+echo -e " ${BLUE}1.${NC} 重装系统               ${BLUE}2.${NC} 流媒体检测"
+echo -e " ${BLUE}3.${NC} 添加warp v4出站        ${BLUE}4.${NC} IPCheck"
 
-                            read -p "请输入端口号 (默认: 3001): " user_port
-                            user_port=${user_port:-3001}  # 如果用户未输入，则使用默认值 "3001"
+echo -e "${GREEN}【代理工具】${NC}"
+echo -e " ${BLUE}5.${NC} XUI                   ${BLUE}6.${NC} 3-XUI"
+echo -e " ${BLUE}7.${NC} ss                    ${BLUE}8.${NC} snell"
+echo -e " ${BLUE}9.${NC} singbox               ${BLUE}10.${NC} sub-store"
+echo -e " ${BLUE}11.${NC} vasma八合一           ${BLUE}12.${NC} ss2022/snell+shadowtls"
+echo -e " ${BLUE}13.${NC} ShadowtlsV3                "
+
+echo -e "${GREEN}【其他选项】${NC}"
+echo -e " ${RED}0.${NC} 退出脚本               ${RED}00.${NC} 更新脚本"
+echo -e " ${PURPLE}rm.${NC} 删除脚本"
+
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+read -p " 请输入选项 > " choice
+
+case $choice in
+    1)   
+        clear
+        
+        echo "https://github.com/bin456789/reinstall"
+        echo "     "
+        echo "安装后运行以下指令即为重装为debian11"
+        echo "bash reinstall.sh debian 11 "
+        echo "Linux重装后	用户名:root	 密码:123@@@"
+        echo "1:安装   2:退出"
+        read -p " " inner_choice
+        case $inner_choice in
+            1)   
+                curl -O https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh
+                ;;
+            2)   
+                exit 0
+                ;;
+            *)
+                echo "无效输入"
+                ;;
+        esac
+        ;;
+    2)   
+        bash <(curl -L -s https://raw.githubusercontent.com/1-stream/RegionRestrictionCheck/main/check.sh)
+        ;;
+    3)  
+        wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh 4
+        ;;
+    4)  
+        bash <(curl -sL IP.Check.Place)  
+        ;;
+    5)  
+        bash <(curl -L -s https://github.com/1-stream/RegionRestrictionCheck/raw/main/check.sh)
+        ;;
+    6)  
+        bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
+        ;;
+    7)
+        wget -O ss-rust.sh --no-check-certificate https://raw.githubusercontent.com/xOS/Shadowsocks-Rust/master/ss-rust.sh && chmod +x ss-rust.sh && ./ss-rust.sh
+        ;;
+    8)
+        wget -O snell.sh --no-check-certificate https://git.io/Snell.sh && chmod +x snell.sh && ./snell.sh
+        ;; 
+    9)
+        clear
+        echo "https://233boy.com/sing-box/sing-box-script/ "
+        echo "     "
+        echo "sb add ss -> 添加一个 Shadowsocks 2022 配置"
+        echo "sb add reality -> 添加一个 VLESS-REALITY 配置"
+        echo "1:安装   2:退出"
+        read -p " " inner_choice
+        case $inner_choice in
+            1)   
+                bash <(wget -qO- -o- https://github.com/233boy/sing-box/raw/main/install.sh)
+                ;;
+            2)   
+                exit 0
+                ;;
+            *)
+                echo "无效输入"
+                ;;
+        esac
+        ;;
+    10)
+        # 修改子菜单，使其在完成操作后不循环
+        clear
+        echo -e "\033[38;5;208m'子存储项目Sub-Store' \033[0m"
+        echo "------------------------"
+        echo "菜单栏："
+        echo "------------------------"
+        echo "1. 安装项目"
+        echo "2. 删除项目"
+        echo "0. 返回主菜单"
+        read -p "请输入你的选择：" user_choice
+        name="sub-store"
+
+        case $user_choice in
+            1)
+                install_docker
+                iptables_open
+
+                # 检查名为sub-store的容器是否已存在
+                container_exists=$(docker ps -a --format '{{.Names}}' | grep -w "$name")
+                if [ "$container_exists" = "$name" ]; then
+                    echo "子存储项目已安装"
+                else
+                    # 提示用户输入路径和端口
+                    read -p "请输入加密路径 (默认: abc): " user_path
+                    user_path=${user_path:-abc}  # 如果用户未输入，则使用默认值 "abc"
+
+                    read -p "请输入端口号 (默认: 3001): " user_port
+                    user_port=${user_port:-3001}  # 如果用户未输入，则使用默认值 "3001"
 
 
-                            # 初始化端口占用信息变量
-                            ports_to_check=$user_port
-                            # 使用函数检查定义的端口数组
-                            if ! check_ports "${ports_to_check[@]}"; then
-                                exit 1  # 如果检查失败则退出
-                            else
-                                echo "端口未被占用，可以继续执行"
-                            fi
+                    # 初始化端口占用信息变量
+                    ports_to_check=$user_port
+                    # 使用函数检查定义的端口数组
+                    if ! check_ports "${ports_to_check[@]}"; then
+                        exit 1  # 如果检查失败则退出
+                    else
+                        echo "端口未被占用，可以继续执行"
+                    fi
 
-                            # 运行Docker命令
-                            docker run -it -d --restart=always \
-                                -e "SUB_STORE_CRON=0 0 * * *" \
-                                -e SUB_STORE_FRONTEND_BACKEND_PATH=/$user_path \
-                                -p $user_port:3001 \
-                                -v /root/sub-store-data:/opt/app/data \
-                                --name $name \
-                                xream/sub-store
-                            check_ip_address
-                            echo "Sub-Store 容器已启动，路径为 $user_path，端口为 $user_port"
-                            echo "http://$ip_address:$user_port?api=http://$ip_address:$user_port/$user_path"
-                            
-                        fi
-                        read -n 1 -s -r -p "按任意键返回"
-                        echo
+                    # 运行Docker命令
+                    docker run -it -d --restart=always \
+                        -e "SUB_STORE_CRON=0 0 * * *" \
+                        -e SUB_STORE_FRONTEND_BACKEND_PATH=/$user_path \
+                        -p $user_port:3001 \
+                        -v /root/sub-store-data:/opt/app/data \
+                        --name $name \
+                        xream/sub-store
+                    check_ip_address
+                    echo "Sub-Store 容器已启动，路径为 $user_path，端口为 $user_port"
+                    echo "http://$ip_address:$user_port?api=http://$ip_address:$user_port/$user_path"
+                    
+                fi
+                ;;
+
+            2)
+                # 提示用户确认是否删除挂载卷
+                echo "是否删除宿主机挂载卷 /root/sub-store-data? (y/n)"
+                read answer
+
+                case $answer in
+                    y)
+                        echo "正在删除..."
+                        docker stop $name
+                        docker rm $name
+                        rm -rf /root/sub-store-data
+                        echo "项目和挂载卷已删除。"
                         ;;
-
-                    2)
-                        # 提示用户确认是否删除挂载卷
-                        echo "是否删除宿主机挂载卷 /root/sub-store-data? (y/n)"
-                        read answer
-
-                        case $answer in
-                            y)
-                                echo "正在删除..."
-                                docker stop $name
-                                docker rm $name
-                                rm -rf /root/sub-store-data
-                                echo "项目和挂载卷已删除。"
-                                ;;
-                            n)
-                                echo "正在删除 Docker 容器，但保留挂载卷..."
-                                docker stop $name
-                                docker rm $name
-                                echo "Docker 项目已删除，但挂载卷保留。"
-                                ;;
-                            *)
-                                echo "无效输入，请输入 'y' 或 'n'。"
-                                ;;
-                        esac
-                        read -n 1 -s -r -p "按任意键返回"
-                        echo
+                    n)
+                        echo "正在删除 Docker 容器，但保留挂载卷..."
+                        docker stop $name
+                        docker rm $name
+                        echo "Docker 项目已删除，但挂载卷保留。"
                         ;;
-
-                    0)
-                        echo "返回主菜单。"
-                        exit
-                        ;;
-
                     *)
-                        echo "无效输入，请重新选择。"
-                        sleep 1
+                        echo "无效输入，请输入 'y' 或 'n'。"
                         ;;
                 esac
-            done
-            ;;
-        11)
-            wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
-            ;; 
-        12)
-            bash <(curl -L -s menu.jinqians.com)
-            ;; 
-        13)
-            wget -O ShadowTLS_Manager.sh --no-check-certificate https://raw.githubusercontent.com/Kismet0123/ShadowTLS-Manager/refs/heads/main/ShadowTLS_Manager.sh && chmod +x ShadowTLS_Manager.sh && ./ShadowTLS_Manager.sh
-            ;; 
+                ;;
 
-        0)
-            clear
-            exit
-            ;;
-        00)
-            renew
-            ;;
-        rm)
-            remove_script
-            exit
-            ;;
-        *)
-            echo "无效输入"
-            sleep 1
-            ;;
-    esac
-done
+            0)
+                echo "退出脚本。"
+                exit 0
+                ;;
+
+            *)
+                echo "无效输入。"
+                ;;
+        esac
+        ;;
+    11)
+        wget -P /root -N --no-check-certificate "https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh" && chmod 700 /root/install.sh && /root/install.sh
+        ;; 
+    12)
+        bash <(curl -L -s menu.jinqians.com)
+        ;; 
+    13)
+        wget -O ShadowTLS_Manager.sh --no-check-certificate https://raw.githubusercontent.com/Kismet0123/ShadowTLS-Manager/refs/heads/main/ShadowTLS_Manager.sh && chmod +x ShadowTLS_Manager.sh && ./ShadowTLS_Manager.sh
+        ;; 
+
+    0)
+        clear
+        exit 0
+        ;;
+    00)
+        renew
+        ;;
+    rm)
+        remove_script
+        exit 0
+        ;;
+    *)
+        echo "无效输入"
+        ;;
+esac
