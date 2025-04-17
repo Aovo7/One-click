@@ -105,7 +105,8 @@ echo -e " ${BLUE}5.${NC} XUI                   ${BLUE}6.${NC} 3-XUI"
 echo -e " ${BLUE}7.${NC} ss                    ${BLUE}8.${NC} snell"
 echo -e " ${BLUE}9.${NC} singbox               ${BLUE}10.${NC} sub-store"
 echo -e " ${BLUE}11.${NC} vasma八合一           ${BLUE}12.${NC} ss2022/snell+shadowtls"
-echo -e " ${BLUE}13.${NC} ShadowtlsV3                "
+echo -e " ${BLUE}13.${NC} ShadowtlsV3            
+echo -e " ${BLUE}15.${NC} Multi-Shadowtls         "
 
 echo -e "${GREEN}【其他选项】${NC}"
 echo -e " ${RED}0.${NC} 退出脚本               ${RED}00.${NC} 更新脚本"
@@ -276,6 +277,9 @@ case $choice in
         ;; 
     13)
         wget -O ShadowTLS_Manager.sh --no-check-certificate https://raw.githubusercontent.com/Kismet0123/ShadowTLS-Manager/refs/heads/main/ShadowTLS_Manager.sh && chmod +x ShadowTLS_Manager.sh && ./ShadowTLS_Manager.sh
+        ;; 
+    15)
+        bash <(curl -sL https://raw.githubusercontent.com/Aovo7/One-click/refs/heads/main/multi-shadowtls.sh) 
         ;; 
 
     0)
