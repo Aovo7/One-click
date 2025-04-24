@@ -148,7 +148,7 @@ case $choice in
         bash <(curl -sL IP.Check.Place)  
         ;;
     5)  
-        bash <(curl -L -s https://github.com/1-stream/RegionRestrictionCheck/raw/main/check.sh)
+        bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh)
         ;;
     6)  
         bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
