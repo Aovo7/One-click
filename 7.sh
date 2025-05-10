@@ -281,6 +281,9 @@ case $choice in
     15)
         bash <(curl -sL https://raw.githubusercontent.com/Aovo7/One-click/refs/heads/main/multi-shadowtls.sh) 
         ;; 
+    20)
+        bash <(curl -sL https://raw.githubusercontent.com/Aovo7/One-click/refs/heads/main/SnellV4-Multi.sh)
+        ;; 
 
     0)
         clear
