@@ -107,7 +107,8 @@ echo -e " ${BLUE}9.${NC} singbox               ${BLUE}10.${NC} sub-store"
 echo -e " ${BLUE}11.${NC} vasma八合一           ${BLUE}12.${NC} ss2022/snell+shadowtls"
 echo -e " ${BLUE}13.${NC} ShadowtlsV3                "
 echo -e " ${BLUE}15.${NC} Multi-Shadowtls      ${BLUE}16.${NC} Telegram自走机器人PagerMaid         "
-echo -e " ${BLUE}17.${NC} 安装 Python 3.10        "
+echo -e " ${BLUE}17.${NC} 安装 Python 3.10         ${BLUE}18.${NC} Rent.sh   "
+echo -e " ${BLUE}20.${NC} Snell多用户    "
 echo -e "${GREEN}【其他选项】${NC}"
 echo -e " ${RED}0.${NC} 退出脚本               ${RED}00.${NC} 更新脚本"
 echo -e " ${PURPLE}rm.${NC} 删除脚本"
@@ -287,10 +288,13 @@ case $choice in
     17)
         bash <(curl -sL https://raw.githubusercontent.com/Aovo7/One-click/refs/heads/main/install_python310.sh) 
         ;; 
-    20)
-        bash <(curl -sL https://raw.githubusercontent.com/Aovo7/One-click/refs/heads/main/SnellV4-Multi.sh)
+    18)
+        sudo apt install iptables bc python3 wget nano openssl && bash <(curl -sL https://raw.githubusercontent.com/BlackSheep-cry/Rent-PL/main/rent.sh) 
         ;; 
-
+    20)
+        #bash <(curl -sL https://raw.githubusercontent.com/Aovo7/One-click/refs/heads/main/SnellV4-Multi.sh)
+        sh -c "$(curl -fsSL https://install.jinqians.com)"
+        ;; 
     0)
         clear
         exit 0
